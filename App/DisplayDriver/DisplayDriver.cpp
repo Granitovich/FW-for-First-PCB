@@ -239,13 +239,19 @@ bool DisplayDriver::writeCmd(const uint8_t cmd)
 {
 	dcSet(false);
 
+    if(HAL_SPI_STATE_READY != m_config.hspi->State)
+    {
+        while(m_config.hspi->State == HAL_SPI_STATE_READY){};
+    }
+
+
 	if ( HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, &cmd, sizeof(cmd)) )
 	{
 		return false;
 	}
 
     //TODO: check without delay
-    while(m_config.hspi->State == HAL_SPI_STATE_BUSY_TX);
+    
     
     return true;
 
@@ -256,12 +262,15 @@ bool DisplayDriver::writeData(const uint8_t *const buff, const size_t buff_size)
 {
     dcSet(true);
 
+    if(HAL_SPI_STATE_READY != m_config.hspi->State)
+    {
+        while(m_config.hspi->State == HAL_SPI_STATE_READY){};
+    }
+
     if (HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, buff, buff_size))
     {
         return false;
     }
-    //TODO: Try reduce delay
-    while (m_config.hspi->State == HAL_SPI_STATE_BUSY_TX);
 
     return true;
 }
@@ -553,6 +562,7 @@ DisplayDriver::DisplayStatus DisplayDriver::fillRectangle(uint16_t x, uint16_t y
             tbuf[x] = data[0];
             tbuf[x + 1] = data[1];
         }
+
         if ( HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, tbuf, sizeof(tbuf)) )
         {
         	return DisplayStatus::SendError;
@@ -825,6 +835,7 @@ DisplayDriver::DisplayStatus DisplayDriver::drawFastHLine(int16_t x, int16_t y, 
 
 //     return DisplayStatus::OK;
 // }
+
 DisplayDriver::DisplayStatus DisplayDriver::drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor)
 {
     if (str == nullptr)
