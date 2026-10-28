@@ -19,7 +19,7 @@
             "device": "STM32G0B1KC",
             "runToEntryPoint": "main",
             "showDevDebugOutput": "none",
-            "speed": "4000",
+            "preLaunchTask": "",
             "servertype": "jlink",
             "serverpath": "C:/Program Files/SEGGER/JLink_V866/JLinkGDBServerCL.exe",
             "gdbPath": "arm-none-eabi-gdb"

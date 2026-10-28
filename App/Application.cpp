@@ -1,3 +1,4 @@
+#include "DisplayDriver/Constants/fonts.h"
 #include "main.h"
 #include "Application.hpp"
 #include "DisplayDriver/DisplayDriver.hpp"
@@ -30,7 +31,11 @@ bool App::init()
    //display.drawLine(0,0, 10, 0, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
    //display.drawFastHLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::RED);
    //display.drawFastVLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
-   display.drawString(0, 20, "Settings", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   display.drawRoundRect(10, 10, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+   display.drawString(20, 20, "Settings", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+   display.drawRoundRect(10, 60, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+   display.drawString(15, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
   
    //display.drawImage(Images::MemoryCardErrorPortrait);
     // Place your initialization code here.
