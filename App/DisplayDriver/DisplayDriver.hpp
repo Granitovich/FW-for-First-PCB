@@ -58,8 +58,10 @@ namespace DriverLayer
         DisplayStatus drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
         DisplayStatus fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
         DisplayStatus fillScreen(uint16_t color);
+        DisplayStatus drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
 
-        void drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
+
+        //void drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
         void invertColors(bool invert);
         void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
         void drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color);
@@ -224,6 +226,7 @@ namespace DriverLayer
         bool writeData(const uint8_t *const buff, const size_t buff_size);
         bool setAddressWindow(const uint8_t x0, const uint8_t y0, const uint8_t x1, const uint8_t y1);
         bool setImage(const uint16_t x, const uint16_t y, const uint16_t w, const uint16_t h, const uint16_t *data);
+        bool writeChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor);
 
         DriverConfig m_config;
         SPI_HandleTypeDef *m_hspi;

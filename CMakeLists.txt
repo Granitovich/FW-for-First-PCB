@@ -49,6 +49,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/Application.cpp
     App/mainCpp.cpp
     App/DisplayDriver/DisplayDriver.cpp
+    App/DisplayDriver/Constants/Fonts.c
 )
 
 # Add include paths

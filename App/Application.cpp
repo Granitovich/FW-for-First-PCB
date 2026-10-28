@@ -2,7 +2,7 @@
 #include "Application.hpp"
 #include "DisplayDriver/DisplayDriver.hpp"
 #include "DisplayDriver/Constants/Images.h"
-
+#include "DisplayDriver/Constants/Fonts.h"
 extern SPI_HandleTypeDef hspi3;
 
 
@@ -27,7 +27,10 @@ bool App::init()
    display.init();
    display.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
    display.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-   display.drawLine(10,10, 20, 20, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
+   //display.drawLine(0,0, 10, 0, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
+   //display.drawFastHLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::RED);
+   //display.drawFastVLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
+   display.drawString(0, 20, "Settings", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
   
    //display.drawImage(Images::MemoryCardErrorPortrait);
     // Place your initialization code here.
