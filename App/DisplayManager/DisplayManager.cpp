@@ -1,56 +1,37 @@
-// // Початкова ініціалізація екрану / заставки (створення init image)
-//     void createInitImage() {
-//         driver.fillScreen(BLACK);
-//         // Малюємо логотип або текст заставки
-//         driver.drawString(10, 30, "MemoryHub FW", WHITE);
-//         driver.drawString(10, 50, "Initializing...", GRAY);
-//         currentState = DisplayState::SPLASH_SCREEN;
-//     }
+#include "DisplayManager.hpp"
 
-//     // Головна функція створення та відрисовки меню
-//     void createMenu(const char* title, const char* items[], uint8_t itemCount) {
-//         driver.fillScreen(BLACK);
-        
-//         // Виводимо заголовок меню
-//         driver.drawString(10, 5, title, YELLOW);
-//         driver.drawLine(0, 18, 128, 18, GRAY); // Розділювальна лінія
+bool Application::DisplayManager::createInit() 
+{
 
-//         // Виводимо пункти меню
-//         int y = 25;
-//         for (uint8_t i = 0; i < itemCount; i++) {
-//             if (i == menuIndex) {
-//                 // Виділяємо активний пункт прямокутником або інверсією
-//                 driver.fillRect(0, y - 2, 128, 16, DARK_GRAY);
-//                 driver.drawString(10, y, items[i], WHITE);
-//             } else {
-//                 driver.drawString(10, y, items[i], LIGHT_GRAY);
-//             }
-//             y += 18;
-//         }
-//         currentState = DisplayState::MAIN_MENU;
-//     }
+   driver.init();
+   driver.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
+   //display.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
-//     // Керування курсором (наприклад, при натисканні кнопок або енкодера)
-//     void moveCursorUp(uint8_t maxItems) {
-//         if (menuIndex > 0) {
-//             menuIndex--;
-//         } else {
-//             menuIndex = maxItems - 1; // Зациклювання вгору
-//         }
-//     }
+   //display.drawImage(Images::MemoryCardErrorPortrait);
 
-//     void moveCursorDown(uint8_t maxItems) {
-//         if (menuIndex < maxItems - 1) {
-//             menuIndex++;
-//         } else {
-//             menuIndex = 0; // Зациклювання вниз
-//         }
-//     }
 
-//     uint8_t getSelectedIndex() const {
-//         return menuIndex;
-//     }
+   //HAL_Delay(5000);
+   driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   driver.drawString(20, 10, "MemoryHub", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   driver.drawString(10, 40, "Created by", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   driver.drawString(5, 60, "Granitovich", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   driver.drawString(20, 80, "With Love", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::RED, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   driver.drawString(20, 100, "to Family", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::RED, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   driver.drawString(5, 130, "Version 1.0", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   HAL_Delay(1000);
+   driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+   //display.drawLine(0,0, 10, 0, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
+   //display.drawFastHLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::RED);
+   //display.drawFastVLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
+   driver.drawRoundRect(10, 10, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+   driver.drawString(20, 20, "Settings", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
-//     DisplayState getState() const {
-//         return currentState;
-//     }
+   driver.drawRoundRect(10, 60, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+   driver.drawString(15, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+   driver.drawRoundRect(10, 110, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+   driver.drawString(15, 120, "Sensoring", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+   return true;
+}
+  

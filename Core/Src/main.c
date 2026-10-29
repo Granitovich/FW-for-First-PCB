@@ -60,7 +60,7 @@ DMA_HandleTypeDef hdma_spi3_tx;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
+bool transferComplete = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -488,7 +488,13 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+  if(hspi == &hspi3)
+  {
+    transferComplete = true;
+  }
+}
 /* USER CODE END 4 */
 
 /**

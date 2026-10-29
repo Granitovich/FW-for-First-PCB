@@ -3,6 +3,8 @@
 #include <cstdlib>
 using namespace DriverLayer;
 
+extern bool transferComplete;
+uint8_t DisplayDriver::transferDmaBuffer[DisplayDriver::DisplayDriverConstant::DMA_BUFFER_SIZE];
 /*
  * GLib_ST7735R_1.8_TFT
  * Copyright (C) 2025 Anatoliy Lizanets, Andrew Kushyk, Andriy Honcharenko, ScarsFun
@@ -239,17 +241,11 @@ bool DisplayDriver::writeCmd(const uint8_t cmd)
 {
 	dcSet(false);
 
-    if(HAL_SPI_STATE_READY != m_config.hspi->State)
-    {
-        while(m_config.hspi->State == HAL_SPI_STATE_READY){};
-    }
-
-
 	if ( HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, &cmd, sizeof(cmd)) )
 	{
 		return false;
 	}
-
+    while (m_config.hspi->State == HAL_SPI_STATE_BUSY_TX) {};
     //TODO: check without delay
     
     
@@ -261,16 +257,22 @@ bool DisplayDriver::writeCmd(const uint8_t cmd)
 bool DisplayDriver::writeData(const uint8_t *const buff, const size_t buff_size)
 {
     dcSet(true);
-
-    if(HAL_SPI_STATE_READY != m_config.hspi->State)
+    
+    for(size_t i = 0; i < buff_size; i++)
     {
-        while(m_config.hspi->State == HAL_SPI_STATE_READY){};
+        transferDmaBuffer[i] = buff[i];
     }
-
-    if (HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, buff, buff_size))
+    while(!transferComplete);
+    
+    csSet(true);
+    csSet(false);
+    if (HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, transferDmaBuffer, buff_size))
     {
         return false;
     }
+  
+
+    //while (m_config.hspi->State == HAL_SPI_STATE_BUSY_TX) {};
 
     return true;
 }
@@ -462,7 +464,7 @@ bool DisplayDriver::setImage(const uint16_t x, const uint16_t y, const uint16_t 
         return false;
     }
 
-    csSet(true);
+    //csSet(true);
 
     return true;
 }

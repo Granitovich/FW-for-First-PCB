@@ -224,6 +224,7 @@ namespace DriverLayer
             YSTART = 0,
             DEFAULT_ROTATION = Portrait,
             DATA_ROTATION = (DisplayDriverCmd::MADCTL_MX | DisplayDriverCmd::MADCTL_MY),
+            DMA_BUFFER_SIZE = 40960
 
         } DisplayDriverConstant;
 
@@ -252,6 +253,7 @@ namespace DriverLayer
         bool writeChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor);
         bool drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color);
 
+        static uint8_t transferDmaBuffer[DMA_BUFFER_SIZE];
         DriverConfig m_config;
         SPI_HandleTypeDef *m_hspi;
         DriverGpio &m_gpios;
