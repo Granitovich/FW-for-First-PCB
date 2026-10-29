@@ -9,14 +9,9 @@ extern "C"
     void mainCpp(void)
     {
         App &app = App::getInstance();
-        if (!app.init())
-        {
-            Error_Handler();
-        }
-        while (1)
-        {
-            app.run();
-        }
+        
+        app.run();
+        
     }
     void handleErrorCpp(void)
     {
