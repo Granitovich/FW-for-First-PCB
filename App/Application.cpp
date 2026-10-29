@@ -4,9 +4,11 @@
 #include "DisplayDriver/Constants/fonts.h"
 #include "DisplayDriver/DisplayDriver.hpp"
 #include "DisplayManager/DisplayManager.hpp"
+#include "ButtonManager/ButtonManager.hpp"
 #include "main.h"
 #include "stm32g0xx_hal.h"
 extern SPI_HandleTypeDef hspi3;
+extern bool buttonPressed;
 
 // This is the C++ code that will run in the main loop.
 void App::run() 
@@ -24,7 +26,8 @@ void App::run()
   };
 
   DriverLayer::DisplayDriver driver(&hspi3, gpios);
-  Application::DisplayManager display(driver);
+  Application::ButtonManager btnManager(buttonPressed);
+  Application::DisplayManager display(driver, btnManager);
 
 
     display.createInit();

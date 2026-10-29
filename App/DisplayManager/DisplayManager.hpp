@@ -1,7 +1,7 @@
 #pragma once
 
 #include "DisplayDriver/DisplayDriver.hpp" 
-
+#include "ButtonManager/ButtonManager.hpp"
 
 namespace Application
 {
@@ -9,7 +9,7 @@ namespace Application
     {
 
     public:
-        DisplayManager(DriverLayer::DisplayDriver &dispDriver) : driver(dispDriver), currentState(DisplayState::MAIN_MENU) {}
+        DisplayManager(DriverLayer::DisplayDriver &dispDriver, ButtonManager &btnManager) : driver(dispDriver), m_btnManager(btnManager), currentState(DisplayState::MAIN_MENU) {}
         bool createInit();
         bool createMenu();
         bool createSensor();
@@ -33,10 +33,12 @@ namespace Application
         } DisplayMainMenuState;
 
     private:
-        DriverLayer::DisplayDriver &driver; 
+        DriverLayer::DisplayDriver &driver;
+        ButtonManager &m_btnManager;
         DisplayState currentState;
         DisplayMainMenuState currentMenuState;
         uint8_t currentMenuIndex = 0;
         uint8_t menuIndex = 0;    
+        uint8_t sensorIndex = 0;
     };
 }

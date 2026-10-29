@@ -51,6 +51,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     App/DisplayDriver/DisplayDriver.cpp
     App/DisplayDriver/Constants/Fonts.c
     App/DisplayManager/DisplayManager.cpp
+    App/ButtonManager/ButtonManager.cpp
 )
 
 # Add include paths
