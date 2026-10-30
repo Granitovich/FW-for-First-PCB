@@ -29,8 +29,8 @@ bool Application::DisplayManager::createInit()
 }
 bool Application::DisplayManager::run()
 {
-    m_btnManager.updateButtonState();
-    mainMenuHadle(m_btnManager.GetButtonState());
+    m_btnManager.run();
+    mainMenuHadle(m_btnManager.GetChangedButtonState());
 
     return true;
 }

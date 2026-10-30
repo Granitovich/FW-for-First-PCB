@@ -8,7 +8,8 @@
 #include "main.h"
 #include "stm32g0xx_hal.h"
 extern SPI_HandleTypeDef hspi3;
-extern bool buttonPressed;
+extern bool buttonChangedPressed;
+extern bool buttonSetPressed;
 
 // This is the C++ code that will run in the main loop.
 void App::run() 
@@ -26,11 +27,11 @@ void App::run()
   };
 
   DriverLayer::DisplayDriver driver(&hspi3, gpios);
-  Application::ButtonManager btnManager(buttonPressed);
+  Application::ButtonManager btnManager(buttonChangedPressed, buttonSetPressed);
   Application::DisplayManager display(driver, btnManager);
 
 
-    display.createInit();
+  display.createInit();
 
   while((true))
   {

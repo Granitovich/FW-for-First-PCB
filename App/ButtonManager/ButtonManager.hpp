@@ -15,17 +15,27 @@ namespace Application
             Pressing
         } ButtonState;
 
-        ButtonManager(bool& buttonPressed) : m_buttonPressed(buttonPressed) {}
-        ButtonState GetButtonState() { return currentState; }
-        void updateButtonState();
+        ButtonManager(bool& buttonChangedPressed, bool& buttonSetPressed) : m_buttonChangedPressed(buttonChangedPressed), m_buttonSetPressed(buttonSetPressed) {}
+        ButtonState GetChangedButtonState() { return currentChangedButtonState; }
+        ButtonState GetSetButtonState()     { return currentSetButtonState;     }
+        void run();
+        void updateButtonState(ButtonState buttonState, uint32_t buttonPin, uint32_t& buttonPressTime, ButtonState& currentState, bool& m_buttonPressed);
 
     private:
           
-        ButtonState currentState = NoPress;
+        ButtonState currentChangedButtonState = NoPress;
+        ButtonState currentSetButtonState     = NoPress;        
+
         const uint32_t shortPressThreshold = 1000; // 1 second threshold for short press
         const uint32_t longPressThreshold = 2000; // 3 seconds threshold for long press
-        uint32_t buttonPressTime = 0;
-        bool& m_buttonPressed;    
-        uint32_t buttonPin = BUTTON_CHANGE_Pin;
+
+        uint32_t buttonChangedPressTime = 0;
+        uint32_t buttonSetPressTime     = 0;
+
+        bool& m_buttonChangedPressed;
+        bool& m_buttonSetPressed;
+
+        uint32_t buttonChangedPin = BUTTON_CHANGE_Pin;
+        uint32_t buttonSetPin    = BUTTON_SET_Pin;
     };
 }

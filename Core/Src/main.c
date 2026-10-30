@@ -61,7 +61,8 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 bool transferComplete = false;
-bool buttonPressed = false;
+bool buttonChangedPressed = false;
+bool buttonSetPressed = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -451,6 +452,7 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOF_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
@@ -469,6 +471,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(BUTTON_CHANGE_GPIO_Port, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : BUTTON_SET_Pin */
+  GPIO_InitStruct.Pin = BUTTON_SET_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(BUTTON_SET_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pins : DISP_LED_Pin DISP_RES_Pin DISP_DC_Pin DISP_CS_Pin */
   GPIO_InitStruct.Pin = DISP_LED_Pin|DISP_RES_Pin|DISP_DC_Pin|DISP_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -484,6 +492,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(SD_CS_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI2_3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_3_IRQn);
+
   HAL_NVIC_SetPriority(EXTI4_15_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI4_15_IRQn);
 
@@ -504,7 +515,11 @@ void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
   if(GPIO_Pin == BUTTON_CHANGE_Pin)
   {
-    buttonPressed = true;
+    buttonChangedPressed = true;
+  }
+  if(GPIO_Pin == BUTTON_SET_Pin) 
+  {
+    buttonSetPressed = true;
   }
 }
 /* USER CODE END 4 */

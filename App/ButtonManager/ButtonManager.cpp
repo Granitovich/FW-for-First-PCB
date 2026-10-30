@@ -1,7 +1,7 @@
 #include "ButtonManager.hpp" 
 
 
-void Application::ButtonManager::updateButtonState()
+void Application::ButtonManager::updateButtonState(ButtonState buttonState, uint32_t buttonPin, uint32_t& buttonPressTime, ButtonState& currentState, bool& m_buttonPressed)
 {
     if (m_buttonPressed || HAL_GPIO_ReadPin(BUTTON_CHANGE_GPIO_Port, buttonPin) == GPIO_PIN_RESET)
     {
@@ -34,4 +34,9 @@ void Application::ButtonManager::updateButtonState()
             currentState = NoPress;
         }
     }
+}
+void Application::ButtonManager::run()
+{
+    updateButtonState(currentChangedButtonState, buttonChangedPin, buttonChangedPressTime, currentChangedButtonState, m_buttonChangedPressed);
+    updateButtonState(currentSetButtonState,     buttonSetPin,     buttonSetPressTime,     currentSetButtonState,     m_buttonSetPressed);
 }
