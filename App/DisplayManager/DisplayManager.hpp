@@ -42,6 +42,8 @@ namespace Application
         {
             Brightness = 0,
             AnimationTime,
+            SensTime,
+            Settings_Count,
             Settings_InitialState
         } DisplaySettingsState;
 
@@ -69,6 +71,7 @@ namespace Application
         ButtonManager::ButtonState previousChangedButtonState;
         ButtonManager::ButtonState previousSetButtonState;
         uint8_t currentMenuIndex = 0;
+        uint8_t currentSettingsIndex = 0;
         uint8_t menuIndex = 0;    
         bool backToMenu = 0;
     };
