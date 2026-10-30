@@ -17,6 +17,9 @@ namespace Application
         bool createSensor();
         bool run();
         bool mainMenuHadle(ButtonManager::ButtonState buttonState);
+        bool settingsHandle(ButtonManager::ButtonState buttonState);
+        bool animationHandle(ButtonManager::ButtonState buttonState);
+        bool sensorHandle(ButtonManager::ButtonState buttonState);
 
         typedef enum 
         {
@@ -63,7 +66,8 @@ namespace Application
         DisplaySensorState   currentSensorState;
         DisplaySettingsState currentSettingsState;
         DisplayAnimationsState currentAnimationsState;
-        ButtonManager::ButtonState previousbuttonState;
+        ButtonManager::ButtonState previousChangedButtonState;
+        ButtonManager::ButtonState previousSetButtonState;
         uint8_t currentMenuIndex = 0;
         uint8_t menuIndex = 0;    
         bool backToMenu = 0;

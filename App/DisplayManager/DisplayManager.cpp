@@ -5,11 +5,7 @@ bool Application::DisplayManager::createInit()
 
     driver.init();
     driver.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
-    // display.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
-    // display.drawImage(Images::MemoryCardErrorPortrait);
-
-    // HAL_Delay(5000);
     driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(20, 10, "MemoryHub", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(10, 40, "Created by", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
@@ -17,11 +13,10 @@ bool Application::DisplayManager::createInit()
     driver.drawString(20, 80, "With Love", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::RED, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(20, 100, "to Family", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::RED, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(5, 130, "Version 1.0", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
     HAL_Delay(1000);
     driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-    // display.drawLine(0,0, 10, 0, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
-    // display.drawFastHLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::RED);
-    // display.drawFastVLine(10, 0, 100, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN);
+
     currentMenuState = static_cast<DisplayMainMenuState>(DisplayMainMenuState::MainMenu_InitialState);
     createMenu();
 
@@ -31,6 +26,7 @@ bool Application::DisplayManager::run()
 {
     m_btnManager.run();
     mainMenuHadle(m_btnManager.GetChangedButtonState());
+    settingsHandle(m_btnManager.GetSetButtonState());
 
     return true;
 }
@@ -63,7 +59,7 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
     {
         backToMenu = true;
 
-        if(previousbuttonState == ButtonManager::ButtonState::LongPress)
+        if(previousChangedButtonState == ButtonManager::ButtonState::LongPress)
         {
             return true;
         }
@@ -98,10 +94,43 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
         }
         previousMenuState = currentMenuState;
     }
-    previousbuttonState = buttonState;
+    previousChangedButtonState = buttonState;
 
     return true;
 }
+
+bool Application::DisplayManager::settingsHandle(ButtonManager::ButtonState buttonState)
+{
+    if (buttonState == ButtonManager::ButtonState::LongPress)
+    {
+        backToMenu = true;
+
+        if(previousSetButtonState == ButtonManager::ButtonState::LongPress)
+        {
+            return true;
+        }
+
+        switch (currentSettingsState)
+        {
+        case DisplaySettingsState::Settings_InitialState:
+        {
+            currentMenuState = static_cast<DisplayMainMenuState>(DisplayMainMenuState::MainMenu_InitialState);
+            currentMenuIndex = 0;
+            createMenu();
+
+            break;
+        }
+
+        default:
+            break;
+        }
+    }
+    previousSetButtonState = buttonState;
+
+    return true;
+}
+
+
 
 bool Application::DisplayManager::createMenu()
 {
@@ -231,7 +260,24 @@ bool Application::DisplayManager::createSettings()
     case DisplaySettingsState::Settings_InitialState:
     {
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 10, "Settings", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        
+        driver.drawString(10, 15, "Bright", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawRoundRect(80,5, 40, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(83, 15, "10%", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+        /* becap
+         driver.drawString(10, 5, "Brightness", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawRoundRect(40,30, 40, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(43, 40, "10%", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);*/
+
+        //driver.drawRoundRect(10, 60, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(15, 80, "AnimTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        //driver.drawRoundRect(50, 50, 50, 50, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+
+        //driver.drawRoundRect(10, 110, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(15, 120, "SensTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        //driver.drawRoundRect(50, 30, 80, 50, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+
    
         currentSettingsState = DisplaySettingsState::AnimationTime;
 

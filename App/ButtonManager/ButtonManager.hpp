@@ -19,7 +19,7 @@ namespace Application
         ButtonState GetChangedButtonState() { return currentChangedButtonState; }
         ButtonState GetSetButtonState()     { return currentSetButtonState;     }
         void run();
-        void updateButtonState(ButtonState buttonState, uint32_t buttonPin, uint32_t& buttonPressTime, ButtonState& currentState, bool& m_buttonPressed);
+        void updateButtonState(ButtonState buttonState, GPIO_TypeDef* buttonPort, uint32_t buttonPin, uint32_t& buttonPressTime, ButtonState& currentState, bool& m_buttonPressed);
 
     private:
           
@@ -37,5 +37,7 @@ namespace Application
 
         uint32_t buttonChangedPin = BUTTON_CHANGE_Pin;
         uint32_t buttonSetPin    = BUTTON_SET_Pin;
+        GPIO_TypeDef* buttonChangedPort = BUTTON_CHANGE_GPIO_Port;
+        GPIO_TypeDef* buttonSetPort     = BUTTON_SET_GPIO_Port;
     };
 }
