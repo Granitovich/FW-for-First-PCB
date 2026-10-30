@@ -19,8 +19,10 @@
             "device": "STM32G0B1KC",
             "runToEntryPoint": "main",
             "showDevDebugOutput": "none",
+            "preLaunchTask": "",
             "servertype": "jlink",
-            "serverpath": "C:/Program Files/SEGGER/JLink_V862/JLinkGDBServerCL.exe"
+            "serverpath": "C:/Program Files/SEGGER/JLink_V866/JLinkGDBServerCL.exe",
+            "gdbPath": "arm-none-eabi-gdb"
         },
     ]
 }

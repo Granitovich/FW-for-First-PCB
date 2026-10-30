@@ -58,18 +58,20 @@ namespace DriverLayer
         DisplayStatus drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color);
         DisplayStatus fillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
         DisplayStatus fillScreen(uint16_t color);
+        DisplayStatus drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
+        DisplayStatus drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
+        DisplayStatus fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
 
-        void drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
+
+
+        //void drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
         void invertColors(bool invert);
         void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
-        void drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color);
         void fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
         void fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, int16_t delta, uint16_t color);
         void drawEllipse(int16_t x0, int16_t y0, int16_t rx, int16_t ry, uint16_t color);
         void fillEllipse(int16_t x0, int16_t y0, int16_t rx, int16_t ry, uint16_t color);
         void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color);
-        void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
-        void fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
         void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
         void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color);
 
@@ -80,14 +82,37 @@ namespace DriverLayer
 
         typedef enum : uint16_t
         {
-            BLACK = 0x0000,
-            BLUE = 0x001F,
-            RED = 0xF800,
-            GREEN = 0x07E0,
-            CYAN = 0x07FF,
-            MAGENTA = 0xF81F,
-            YELLOW = 0xFFE0,
-            WHITE = 0xFFFF,
+            // Основні кольори
+            BLACK       = 0x0000,
+            NAVY        = 0x000F,
+            DARKBLUE    = 0x0010,
+            BLUE        = 0x001F,
+            TEAL        = 0x0410,
+            EMERALD     = 0x03E0,
+            GREEN       = 0x07E0,
+            CYAN        = 0x07FF,
+            MAROON      = 0x8000,
+            PURPLE      = 0x8010,
+            INDIGO      = 0x4810,
+            RED         = 0xF800,
+            MAGENTA     = 0xF81F,
+            YELLOW      = 0xFFE0,
+            WHITE       = 0xFFFF,
+
+            // Відтінки сірого (Grayscale / Gray) — від темного до світлого
+            DARKER_GRAY = 0x2104, // Дуже темний сірий
+            DARK_GRAY   = 0x4208, // Темно-сірий
+            GRAY        = 0x8410, // Класичний сірий (50%)
+            LIGHT_GRAY  = 0xC618, // Світло-сірий
+            SILVER      = 0xCE79, // Сріблястий
+
+            // Додаткові корисні відтінки (помаранчевий, рожевий, золотий тощо)
+            ORANGE      = 0xFD20,
+            GOLD        = 0xFEA0,
+            YELLOW_GREEN= 0x9E66,
+            PINK        = 0xF819,
+            VIOLET      = 0x919C,
+            BROWN       = 0xA145
 
         } DisplayDriverColor;
 
@@ -199,6 +224,7 @@ namespace DriverLayer
             YSTART = 0,
             DEFAULT_ROTATION = Portrait,
             DATA_ROTATION = (DisplayDriverCmd::MADCTL_MX | DisplayDriverCmd::MADCTL_MY),
+            DMA_BUFFER_SIZE = 40960
 
         } DisplayDriverConstant;
 
@@ -224,7 +250,10 @@ namespace DriverLayer
         bool writeData(const uint8_t *const buff, const size_t buff_size);
         bool setAddressWindow(const uint8_t x0, const uint8_t y0, const uint8_t x1, const uint8_t y1);
         bool setImage(const uint16_t x, const uint16_t y, const uint16_t w, const uint16_t h, const uint16_t *data);
+        bool writeChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor);
+        bool drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color);
 
+        static uint8_t transferDmaBuffer[DMA_BUFFER_SIZE];
         DriverConfig m_config;
         SPI_HandleTypeDef *m_hspi;
         DriverGpio &m_gpios;

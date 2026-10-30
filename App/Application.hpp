@@ -13,5 +13,6 @@ public:
     void run();
 
 private:
+bool initialized = false;
     
 };

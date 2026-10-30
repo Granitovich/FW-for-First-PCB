@@ -3,6 +3,8 @@
 #include <cstdlib>
 using namespace DriverLayer;
 
+extern bool transferComplete;
+uint8_t DisplayDriver::transferDmaBuffer[DisplayDriver::DisplayDriverConstant::DMA_BUFFER_SIZE];
 /*
  * GLib_ST7735R_1.8_TFT
  * Copyright (C) 2025 Anatoliy Lizanets, Andrew Kushyk, Andriy Honcharenko, ScarsFun
@@ -243,9 +245,10 @@ bool DisplayDriver::writeCmd(const uint8_t cmd)
 	{
 		return false;
 	}
-
+    while (m_config.hspi->State == HAL_SPI_STATE_BUSY_TX) {};
     //TODO: check without delay
-    while(m_config.hspi->State == HAL_SPI_STATE_BUSY_TX);
+    
+    
     return true;
 
 
@@ -254,13 +257,22 @@ bool DisplayDriver::writeCmd(const uint8_t cmd)
 bool DisplayDriver::writeData(const uint8_t *const buff, const size_t buff_size)
 {
     dcSet(true);
-
-    if (HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, buff, buff_size))
+    
+    for(size_t i = 0; i < buff_size; i++)
+    {
+        transferDmaBuffer[i] = buff[i];
+    }
+    while(!transferComplete);
+    
+    csSet(true);
+    csSet(false);
+    if (HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, transferDmaBuffer, buff_size))
     {
         return false;
     }
-    //TODO: Try reduce delay
-    while (m_config.hspi->State == HAL_SPI_STATE_BUSY_TX);
+  
+
+    //while (m_config.hspi->State == HAL_SPI_STATE_BUSY_TX) {};
 
     return true;
 }
@@ -372,7 +384,7 @@ DisplayDriver::DisplayStatus DisplayDriver::drawPixel(const uint16_t x, const ui
     const uint8_t data[] = {colorLowByte, colorHighByte};
 
     if (!setAddressWindow(x, y, x + 1, y + 1) ||
-        (writeData(data, sizeof(data))))
+        (!writeData(data, sizeof(data))))
     {
         return DisplayStatus::SendError;
     }
@@ -452,7 +464,7 @@ bool DisplayDriver::setImage(const uint16_t x, const uint16_t y, const uint16_t 
         return false;
     }
 
-    csSet(true);
+    //csSet(true);
 
     return true;
 }
@@ -552,6 +564,7 @@ DisplayDriver::DisplayStatus DisplayDriver::fillRectangle(uint16_t x, uint16_t y
             tbuf[x] = data[0];
             tbuf[x + 1] = data[1];
         }
+
         if ( HAL_OK != HAL_SPI_Transmit_DMA(m_config.hspi, tbuf, sizeof(tbuf)) )
         {
         	return DisplayStatus::SendError;
@@ -604,10 +617,10 @@ DisplayDriver::DisplayStatus DisplayDriver::drawFastHLine(int16_t x, int16_t y, 
     }
     if ((x + w - 1) >= m_config.width)
     {
-        w = m_config.height - x;
+        w = m_config.width - x;
     }
 
-    if (DisplayStatus::OK != fillRectangle(x, y, 1, w, color))
+    if (DisplayStatus::OK != fillRectangle(x, y, w, 1, color))
     {
         return DisplayStatus::SendError;
     }
@@ -615,7 +628,416 @@ DisplayDriver::DisplayStatus DisplayDriver::drawFastHLine(int16_t x, int16_t y, 
     return DisplayStatus::OK;
 }
 
+// DisplayDriver::DisplayStatus DisplayDriver::invertColors(bool invert)
+// {
+//     csSet(false);
+//     if (!writeCmd(invert ? DisplayDriverCmd::INVON : DisplayDriverCmd::INVOFF))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+//     csSet(true);
 
+//     return DisplayStatus::OK;
+// }
+
+// DisplayDriver::DisplayStatus DisplayDriver::drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
+// {
+//     int16_t f = 1 - r;
+//     int16_t ddF_x = 1;
+//     int16_t ddF_y = -r - r;
+//     int16_t x = 0;
+
+//     if (DisplayStatus::OK != drawPixel(x0 + r, y0, color) ||
+//         DisplayStatus::OK != drawPixel(x0 - r, y0, color) ||
+//         DisplayStatus::OK != drawPixel(x0, y0 - r, color) ||
+//         DisplayStatus::OK != drawPixel(x0, y0 + r, color))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+
+//     while (x < r)
+//     {
+//         if (f >= 0)
+//         {
+//             r--;
+//             ddF_y += 2;
+//             f += ddF_y;
+//         }
+//         x++;
+//         ddF_x += 2;
+//         f += ddF_x;
+
+//         if (DisplayStatus::OK != drawPixel(x0 + x, y0 + r, color) ||
+//             DisplayStatus::OK != drawPixel(x0 - x, y0 + r, color) ||
+//             DisplayStatus::OK != drawPixel(x0 - x, y0 - r, color) ||
+//             DisplayStatus::OK != drawPixel(x0 + x, y0 - r, color) ||
+//             DisplayStatus::OK != drawPixel(x0 + r, y0 + x, color) ||
+//             DisplayStatus::OK != drawPixel(x0 - r, y0 + x, color) ||
+//             DisplayStatus::OK != drawPixel(x0 - r, y0 - x, color) ||
+//             DisplayStatus::OK != drawPixel(x0 + r, y0 - x, color))
+//         {
+//             return DisplayStatus::SendError;
+//         }
+//     }
+
+//     return DisplayStatus::OK;
+// }
+
+// DisplayDriver::DisplayStatus DisplayDriver::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color)
+// {
+//     int16_t f = 1 - r;
+//     int16_t ddF_x = 1;
+//     int16_t ddF_y = -2 * r;
+//     int16_t x = 0;
+
+//     while (x < r)
+//     {
+//         if (f >= 0)
+//         {
+//             r--;
+//             ddF_y += 2;
+//             f += ddF_y;
+//         }
+//         x++;
+//         ddF_x += 2;
+//         f += ddF_x;
+//         if (cornername & 0x8)
+//         {
+//             if (DisplayStatus::OK != drawPixel(x0 - r, y0 + x, color) ||
+//                 DisplayStatus::OK != drawPixel(x0 - x, y0 + r, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//         }
+//         if (cornername & 0x4)
+//         {
+//             if (DisplayStatus::OK != drawPixel(x0 + x, y0 + r, color) ||
+//                 DisplayStatus::OK != drawPixel(x0 + r, y0 + x, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//         }
+//         if (cornername & 0x2)
+//         {
+//             if (DisplayStatus::OK != drawPixel(x0 + r, y0 - x, color) ||
+//                 DisplayStatus::OK != drawPixel(x0 + x, y0 - r, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//         }
+//         if (cornername & 0x1)
+//         {
+//             if (DisplayStatus::OK != drawPixel(x0 - x, y0 - r, color) ||
+//                 DisplayStatus::OK != drawPixel(x0 - r, y0 - x, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//         }
+//     }
+
+//     return DisplayStatus::OK;
+// }
+
+// DisplayDriver::DisplayStatus DisplayDriver::fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
+// {
+//     if (DisplayStatus::OK != drawFastVLine(x0, y0 - r, r + r + 1, color))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+//     if (DisplayStatus::OK != fillCircleHelper(x0, y0, r, 3, 0, color))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+
+//     return DisplayStatus::OK;
+// }
+
+// DisplayDriver::DisplayStatus DisplayDriver::fillCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, int16_t delta, uint16_t color)
+// {
+//     int16_t f = 1 - r;
+//     int16_t ddF_x = 1;
+//     int16_t ddF_y = -r - r;
+//     int16_t x = 0;
+
+//     while (x < r)
+//     {
+//         if (f >= 0)
+//         {
+//             r--;
+//             ddF_y += 2;
+//             f += ddF_y;
+//         }
+//         x++;
+//         ddF_x += 2;
+//         f += ddF_x;
+
+//         if (cornername & 0x1)
+//         {
+//             if (DisplayStatus::OK != drawFastVLine(x0 + x, y0 - r, r + r + 1 + delta, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//             if (DisplayStatus::OK != drawFastVLine(x0 + r, y0 - x, x + x + 1 + delta, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//         }
+//         if (cornername & 0x2)
+//         {
+//             if (DisplayStatus::OK != drawFastVLine(x0 - x, y0 - r, r + r + 1 + delta, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//             if (DisplayStatus::OK != drawFastVLine(x0 - r, y0 - x, x + x + 1 + delta, color))
+//             {
+//                 return DisplayStatus::SendError;
+//             }
+//         }
+//     }
+
+//     return DisplayStatus::OK;
+// }
+
+// DisplayDriver::DisplayStatus DisplayDriver::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
+// {
+//     if (DisplayStatus::OK != drawFastHLine(x + r, y, w - r - r, color) ||
+//         DisplayStatus::OK != drawFastHLine(x + r, y + h - 1, w - r - r, color) ||
+//         DisplayStatus::OK != drawFastVLine(x, y + r, h - r - r, color) ||
+//         DisplayStatus::OK != drawFastVLine(x + w - 1, y + r, h - r - r, color) ||
+//         DisplayStatus::OK != drawCircleHelper(x + r, y + r, r, 1, color) ||
+//         DisplayStatus::OK != drawCircleHelper(x + w - r - 1, y + r, r, 2, color) ||
+//         DisplayStatus::OK != drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color) ||
+//         DisplayStatus::OK != drawCircleHelper(x + r, y + h - r - 1, r, 8, color))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+
+//     return DisplayStatus::OK;
+// }
+// DisplayDriver::DisplayStatus DisplayDriver::fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
+// {
+//     if (DisplayStatus::OK != fillRectangle(x + r, y, w - r - r, h, color) ||
+//         DisplayStatus::OK != fillCircleHelper(x + w - r - 1, y + r, r, 1, h - r - r - 1, color) ||
+//         DisplayStatus::OK != fillCircleHelper(x + r, y + r, r, 2, h - r - r - 1, color))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+
+//     return DisplayStatus::OK;
+// }
+
+// DisplayDriver::DisplayStatus DisplayDriver::drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
+// {
+//     if (DisplayStatus::OK != drawLine(x0, y0, x1, y1, color) ||
+//         DisplayStatus::OK != drawLine(x1, y1, x2, y2, color) ||
+//         DisplayStatus::OK != drawLine(x2, y2, x0, y0, color))
+//     {
+//         return DisplayStatus::SendError;
+//     }
+
+//     return DisplayStatus::OK;
+// }
+
+DisplayDriver::DisplayStatus DisplayDriver::drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor)
+{
+    if (str == nullptr)
+    {
+        return DisplayStatus::InvalidParameter;
+    }
+
+	csSet(false);
+
+    while(*str)
+    {
+        if(x + font.width >= m_config.width)
+        {
+            x = 0;
+            y += font.height;
+            if(y + font.height >= m_config.height)
+            {
+                break;
+            }
+
+            if(*str == ' ')
+            {
+                /* skip spaces in the beginning of the new line */
+                str++;
+                continue;
+            }
+        }
+
+        if (!writeChar(x, y, *str, font, color, bgcolor))
+        {
+            return DisplayStatus::SendError;
+        }
+        x += font.width;
+        str++;
+    }
+   
+    csSet(true);
+
+    return DisplayStatus::OK;
+
+}
+
+bool DisplayDriver::drawCircleHelper(int16_t x0, int16_t y0, int16_t r, uint8_t cornername, uint16_t color)
+{
+    int16_t f = 1 - r;
+    int16_t ddF_x = 1;
+    int16_t ddF_y = -2 * r;
+    int16_t x = 0;
+
+    while (x < r)
+    {
+        if (f >= 0)
+        {
+            r--;
+            ddF_y += 2;
+            f += ddF_y;
+        }
+        x++;
+        ddF_x += 2;
+        f += ddF_x;
+        if (cornername & 0x8)
+        {
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 - r, y0 + x, color))
+            {
+                return false;
+            }
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 - x, y0 + r, color))
+            {
+                return false;
+            }
+        }
+        if (cornername & 0x4)
+        {
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 + x, y0 + r, color))
+            {
+                return false;
+            }
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 + r, y0 + x, color))
+            {
+                return false;
+            }
+        }
+        if (cornername & 0x2)
+        {
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 + r, y0 - x, color))
+            {
+                return false;
+            }
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 + x, y0 - r, color))
+            {
+                return false;
+            }
+        }
+        if (cornername & 0x1)
+        {
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 - x, y0 - r, color))
+            {
+                return false;
+            }
+            if (DisplayDriver::DisplayStatus::OK != drawPixel(x0 - r, y0 - x, color))
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+DisplayDriver::DisplayStatus DisplayDriver::drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
+{
+    
+    // smarter version
+    if(DisplayDriver::DisplayStatus::OK != drawFastHLine(x + r, y, w - r - r, color))         // Top
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(DisplayDriver::DisplayStatus::OK != drawFastHLine(x + r, y, w - r - r, color))         // Top
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(DisplayDriver::DisplayStatus::OK != drawFastHLine(x + r, y + h - 1, w - r - r, color)) // Bottom
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(DisplayDriver::DisplayStatus::OK != drawFastVLine(x, y + r, h - r - r, color))         // Left
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(DisplayDriver::DisplayStatus::OK != drawFastVLine(x + w - 1, y + r, h - r - r, color)) // Right
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    // draw four corners
+    if(!drawCircleHelper(x + r, y + r, r, 1, color))
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(!drawCircleHelper(x + r, y + h - r - 1, r, 8, color))
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(!drawCircleHelper(x + w - r - 1, y + r, r, 2, color))
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+    if(!drawCircleHelper(x + w - r - 1, y + h - r - 1, r, 4, color))
+    {
+        return DisplayDriver::DisplayStatus::SendError;
+    }
+
+    return DisplayDriver::DisplayStatus::OK;
+
+}
+// DisplayStatus fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color)
+// {
+
+// }
+
+bool DisplayDriver::writeChar(uint16_t x, uint16_t y, char ch, FontDef font, uint16_t color, uint16_t bgcolor)
+{
+    uint32_t i, b, j;
+
+    if (!setAddressWindow(x, y, x + font.width - 1, y + font.height - 1))
+    {
+        return false;
+    }
+
+    for (i = 0; i < font.height; i++)
+    {
+        b = font.data[(ch - 32) * font.height + i];
+        for (j = 0; j < font.width; j++)
+        {
+            if ((b << j) & 0x8000)
+            {
+                uint8_t colorLowByte  = color >> 8;
+                uint8_t colorHighByte = color & 0xFF;
+
+                const uint8_t data[2] = { colorLowByte, colorHighByte };
+
+                    if (!writeData(data, sizeof(data)))
+                    {
+                        return false;
+                    }
+            }
+            else
+            {
+                uint8_t colorLowByte  = bgcolor >> 8;
+                uint8_t colorHighByte = bgcolor & 0xFF;
+                const uint8_t data[2] = { colorLowByte, colorHighByte };
+                if (!writeData(data, sizeof(data)))
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
+}
 
 #ifdef OTHER_FUNCTIONALITY
 
