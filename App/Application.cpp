@@ -30,7 +30,7 @@ void App::run()
   DriverLayer::DisplayDriver driver(&hspi3, gpios);
   Application::StorageManager storage;
   Application::ButtonManager btnManager(buttonChangedPressed, buttonSetPressed);
-  Application::DisplayManager display(driver, btnManager);
+  Application::DisplayManager display(driver, btnManager, storage);
 
   storage.restoreSettings();
   

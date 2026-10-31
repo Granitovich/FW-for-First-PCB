@@ -15,11 +15,14 @@ namespace Application
             uint16_t animationTime;
             uint16_t sensorTime;
             uint16_t currentMode;
+            uint16_t versionMajor;
+            uint16_t versionMinor;
+            uint16_t versionPatch;
         }SettingsData;
 
         bool restoreSettings();
         bool writeSettings(SettingsData& data);
-        bool getSettings();
+        SettingsData getSettings() { return settingsData; }
 
       
 
@@ -58,12 +61,16 @@ namespace Application
 
         } CurrentModes;
 
+    
         typedef enum
         {
             BrightnessAddress    = 0x01,
             AnimationTimeAddress = 0x02,
             SensorTimeAddress    = 0x03,
             CurrentModeAddreess  = 0x04,
+            CurrentVersionMajor  = 0x05,
+            CurrentVersionMinor  = 0x06,
+            CurrentVersionParch  = 0x07,
         } VirtualAddress;
 
     private:

@@ -1,7 +1,9 @@
 #include "StorageManager.hpp"
+#include "DisplayDriver/Constants/Version.h"
 #include "eeprom_emul.h"
 #include "eeprom_emul_types.h"
 #include "main.h"
+
 
 bool Application::StorageManager::restoreDefaultSettings() {
   settingsData.animationTime = AnimationTimeModes::AnimationTime_10s;
@@ -9,29 +11,35 @@ bool Application::StorageManager::restoreDefaultSettings() {
   settingsData.sensorTime = SensorTimeModes::SensorTime_10s;
   settingsData.currentMode = CurrentModes::AnimationMode;
 
+  settingsData.versionMajor = version.MAJOR;
+  settingsData.versionMinor = version.MINOR;
+  settingsData.versionPatch = version.PATCH;
+
   if (!writeSettings(settingsData)) {
     return false;
   }
   return true;
 }
 
-bool Application::StorageManager::restoreSettings() 
-{
+bool Application::StorageManager::restoreSettings() {
   HAL_FLASH_Unlock();
   EE_Status status = EE_Init(EE_FORCED_ERASE);
 
-  (void)status;
-  
-
   if (EE_OK != EE_ReadVariable16bits(VirtualAddress::BrightnessAddress,
-                             &settingsData.brightLevel) ||
+                                     &settingsData.brightLevel) ||
       EE_OK != EE_ReadVariable16bits(VirtualAddress::AnimationTimeAddress,
-                             &settingsData.animationTime) ||
+                                     &settingsData.animationTime) ||
       EE_OK != EE_ReadVariable16bits(VirtualAddress::SensorTimeAddress,
-                             &settingsData.sensorTime) ||
+                                     &settingsData.sensorTime) ||
       EE_OK != EE_ReadVariable16bits(VirtualAddress::CurrentModeAddreess,
-                             &settingsData.currentMode) || !verifyData(settingsData)) 
-    {
+                                     &settingsData.currentMode) ||
+      EE_OK != EE_ReadVariable16bits(VirtualAddress::CurrentVersionMajor,
+                                     &settingsData.versionMajor) ||
+      EE_OK != EE_ReadVariable16bits(VirtualAddress::CurrentVersionMinor,
+                                     &settingsData.versionMinor) ||
+      EE_OK != EE_ReadVariable16bits(VirtualAddress::CurrentVersionParch,
+                                     &settingsData.versionPatch) ||
+      !verifyData(settingsData)) {
     EE_Format(EE_FORCED_ERASE);
     EE_Init(EE_FORCED_ERASE);
 
@@ -45,7 +53,7 @@ bool Application::StorageManager::writeSettings(SettingsData &data) {
     settingsData.brightLevel = data.brightLevel;
 
     if (EE_OK != EE_WriteVariable16bits(VirtualAddress::BrightnessAddress,
-                                settingsData.brightLevel)) {
+                                        settingsData.brightLevel)) {
       return false;
     }
   }
@@ -53,7 +61,7 @@ bool Application::StorageManager::writeSettings(SettingsData &data) {
   if (data.animationTime != 0) {
     settingsData.animationTime = data.animationTime;
     if (EE_OK != EE_WriteVariable16bits(VirtualAddress::AnimationTimeAddress,
-                                settingsData.animationTime)) {
+                                        settingsData.animationTime)) {
       return false;
     }
   }
@@ -61,7 +69,7 @@ bool Application::StorageManager::writeSettings(SettingsData &data) {
   if (data.sensorTime != 0) {
     settingsData.sensorTime = data.sensorTime;
     if (EE_OK != EE_WriteVariable16bits(VirtualAddress::SensorTimeAddress,
-                                settingsData.sensorTime)) {
+                                        settingsData.sensorTime)) {
       return false;
     }
   }
@@ -69,7 +77,7 @@ bool Application::StorageManager::writeSettings(SettingsData &data) {
   if (data.currentMode != 0) {
     settingsData.currentMode = data.currentMode;
     if (EE_OK != EE_WriteVariable16bits(VirtualAddress::CurrentModeAddreess,
-                                settingsData.currentMode)) {
+                                        settingsData.currentMode)) {
       return false;
     }
   }
@@ -83,8 +91,7 @@ bool Application::StorageManager::verifyData(SettingsData &data) {
       (data.brightLevel != BrightnessModes::Brightness_25) &&
       (data.brightLevel != BrightnessModes::Brightness_50) &&
       (data.brightLevel != BrightnessModes::Brightness_75) &&
-      (data.brightLevel != BrightnessModes::Brightness_100)) 
-  {
+      (data.brightLevel != BrightnessModes::Brightness_100)) {
     return false;
   }
 
@@ -92,23 +99,27 @@ bool Application::StorageManager::verifyData(SettingsData &data) {
       (data.animationTime != AnimationTimeModes::AnimationTime_10s) &&
       (data.animationTime != AnimationTimeModes::AnimationTime_30s) &&
       (data.animationTime != AnimationTimeModes::AnimationTime_45s) &&
-      (data.animationTime != AnimationTimeModes::AnimationTime_60s)) 
-      {
+      (data.animationTime != AnimationTimeModes::AnimationTime_60s)) {
     return false;
   }
 
-  if ((data.sensorTime != SensorTimeModes::SensorTime_5s)  &&
+  if ((data.sensorTime != SensorTimeModes::SensorTime_5s) &&
       (data.sensorTime != SensorTimeModes::SensorTime_10s) &&
       (data.sensorTime != SensorTimeModes::SensorTime_30s) &&
       (data.sensorTime != SensorTimeModes::SensorTime_45s) &&
-      (data.sensorTime != SensorTimeModes::SensorTime_60s)) 
-  {
+      (data.sensorTime != SensorTimeModes::SensorTime_60s)) {
     return false;
   }
 
   if ((data.currentMode != CurrentModes::SettingsMode) &&
       (data.currentMode != CurrentModes::AnimationMode) &&
       (data.currentMode != CurrentModes::SensorMode)) {
+    return false;
+  }
+
+  if ((data.versionMajor != version.MAJOR) &&
+      (data.currentMode != version.MINOR) &&
+      (data.currentMode != version.PATCH)) {
     return false;
   }
 

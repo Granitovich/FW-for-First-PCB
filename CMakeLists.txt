@@ -63,6 +63,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Middlewares
     Middlewares/Third_Party/EEPROM_Emul/Core
     Middlewares/Third_Party/EEPROM_Emul/Porting/STM32G0
+    
     # Add user defined include paths
 )
 
