@@ -68,7 +68,7 @@ namespace Application
 
     private:
         bool restoreDefaultSettings();
-        bool verifyData();
+        bool verifyData(SettingsData& data);
         SettingsData settingsData;
     };
 }
