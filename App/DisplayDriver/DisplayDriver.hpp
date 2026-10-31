@@ -63,7 +63,7 @@ namespace DriverLayer
         DisplayStatus fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
 
 
-
+        // TODO: Upgrade all func
         //void drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
         void invertColors(bool invert);
         void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);

@@ -120,6 +120,9 @@
 /** @defgroup EEPROM_Exported_Functions EEPROM Exported Functions
   * @{
   */
+#ifdef __cplusplus
+extern "C" {
+#endif 
 EE_Status EE_Format(EE_Erase_type EraseType);
 EE_Status EE_Init(EE_Erase_type EraseType);
 #if defined(EE_ACCESS_32BITS)
@@ -138,6 +141,9 @@ EE_Status EE_CleanUp(void);
 EE_Status EE_CleanUp_IT(void);
 EE_Status EE_DeleteCorruptedFlashAddress(uint32_t Address);
 void EE_EndOfCleanup_UserCallback(void);
+#ifdef __cplusplus
+}
+#endif
 
 /**
   * @}

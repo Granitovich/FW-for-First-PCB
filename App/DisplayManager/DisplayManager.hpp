@@ -2,7 +2,7 @@
 
 #include "DisplayDriver/DisplayDriver.hpp" 
 #include "ButtonManager/ButtonManager.hpp"
-#include "eeprom_emul.h"
+
 namespace Application
 {
     class DisplayManager 
