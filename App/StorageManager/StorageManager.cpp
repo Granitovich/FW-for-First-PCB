@@ -4,7 +4,6 @@
 #include "eeprom_emul_types.h"
 #include "main.h"
 
-
 bool Application::StorageManager::restoreDefaultSettings() {
   settingsData.animationTime = AnimationTimeModes::AnimationTime_10s;
   settingsData.brightLevel = BrightnessModes::Brightness_10;
@@ -23,7 +22,7 @@ bool Application::StorageManager::restoreDefaultSettings() {
 
 bool Application::StorageManager::restoreSettings() {
   HAL_FLASH_Unlock();
-  EE_Status status = EE_Init(EE_FORCED_ERASE);
+  EE_Init(EE_FORCED_ERASE);
 
   if (EE_OK != EE_ReadVariable16bits(VirtualAddress::BrightnessAddress,
                                      &settingsData.brightLevel) ||
@@ -45,6 +44,7 @@ bool Application::StorageManager::restoreSettings() {
 
     restoreDefaultSettings();
   }
+
   return true;
 }
 
@@ -124,4 +124,17 @@ bool Application::StorageManager::verifyData(SettingsData &data) {
   }
 
   return true;
+}
+
+etl::string<Application::StorageManager::versionBufferSize>
+Application::StorageManager::getVersion() const {
+  etl::string<versionBufferSize> ver;
+
+  char versionBuf[versionBufferSize];
+  snprintf(versionBuf, sizeof(versionBuf), "%u.%u.%u", settingsData.versionMajor,
+           settingsData.versionMinor, settingsData.versionPatch);
+  ver.repair();
+
+  ver = versionBuf; 
+  return ver;
 }

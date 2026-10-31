@@ -17,22 +17,7 @@ bool Application::DisplayManager::createInit()
     driver.drawString(5, 80, "Best family", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::RED, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(25, 110, "Version:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::EMERALD, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
-  
-    etl::string<16> version_str;
-    auto settings = m_storage.getSettings();
-
-// Форматуємо напряму у масив даних etl::string
-snprintf(version_str.data(), version_str.capacity(), "%u.%u.%u",
-         settings.versionMajor, 
-         settings.versionMinor, 
-         settings.versionPatch);
-
-// Оновлюємо внутрішню довжину etl::string після стороннього запису через snprintf
-version_str.repair();
-
-
-    
-    driver.drawString(40, 130, version_str.c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+    driver.drawString(40, 130, m_storage.getVersion().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
     HAL_Delay(1000);
     driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);

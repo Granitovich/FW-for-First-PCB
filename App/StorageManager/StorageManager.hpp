@@ -1,5 +1,8 @@
 #pragma once
 #include <cstdint>
+#include <etl/vector.h>
+#include <etl/to_string.h>
+#include <stdint.h>
 
 namespace Application
 {
@@ -24,8 +27,9 @@ namespace Application
         bool writeSettings(SettingsData& data);
         SettingsData getSettings() { return settingsData; }
 
-      
-
+        static constexpr uint8_t versionBufferSize = 18;
+        etl::string<versionBufferSize> getVersion() const;
+    
         typedef enum 
         {
             Brightness_10 = 10,
@@ -76,6 +80,7 @@ namespace Application
     private:
         bool restoreDefaultSettings();
         bool verifyData(SettingsData& data);
+        etl::string<versionBufferSize> versionBuffer;
         SettingsData settingsData;
     };
 }
