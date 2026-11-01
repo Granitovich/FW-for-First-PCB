@@ -29,32 +29,38 @@ namespace Application
 
         static constexpr uint8_t versionBufferSize = 18;
         etl::string<versionBufferSize> getVersion() const;
+        etl::string<versionBufferSize> getBrightness() const;
+        etl::string<versionBufferSize> getAnimationTime() const;
+        etl::string<versionBufferSize> getSensorTime() const;
     
         typedef enum 
         {
-            Brightness_10 = 10,
-            Brightness_25 = 25,
-            Brightness_50 = 50,
-            Brightness_75 = 75,
-            Brightness_100 = 100,
+            Brightness_10 = 1,
+            Brightness_25 = 2,
+            Brightness_50 = 3,
+            Brightness_75 = 4,
+            Brightness_100 = 5,
+            Brightness_Count = 5,
         } BrightnessModes;
 
         typedef enum 
         {
-            AnimationTime_5s  = 5,
-            AnimationTime_10s = 10,
-            AnimationTime_30s = 30,
-            AnimationTime_45s = 45,
-            AnimationTime_60s = 60,
+            AnimationTime_5s  = 1,
+            AnimationTime_10s = 2,
+            AnimationTime_30s = 3,
+            AnimationTime_45s = 4,
+            AnimationTime_60s = 5,
+            AnimationTime_Count = 5,
         } AnimationTimeModes;
 
         typedef enum
         {
-            SensorTime_5s  = 5,
-            SensorTime_10s = 10,
-            SensorTime_30s = 30,
-            SensorTime_45s = 45,
-            SensorTime_60s = 60,
+            SensorTime_5s  = 1,
+            SensorTime_10s = 2,
+            SensorTime_30s = 3,
+            SensorTime_45s = 4,
+            SensorTime_60s = 5,
+            SensorTime_Count = 5,
         } SensorTimeModes;
 
         typedef enum 
@@ -62,6 +68,7 @@ namespace Application
             SettingsMode  = 1,
             AnimationMode = 2,
             SensorMode    = 3,
+            CurrentMode_Count = 3,
 
         } CurrentModes;
 

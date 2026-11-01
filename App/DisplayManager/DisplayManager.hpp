@@ -23,6 +23,7 @@ public:
   bool settingsHandle(ButtonManager::ButtonState buttonState);
   bool animationHandle(ButtonManager::ButtonState buttonState);
   bool sensorHandle(ButtonManager::ButtonState buttonState);
+  bool brightnessHandle();
 
   typedef enum { ANIMATION, MAIN_MENU, SETTINGS, SENSOR_DATA } DisplayState;
 
@@ -62,5 +63,9 @@ private:
   uint8_t currentSettingsIndex = 0;
   uint8_t menuIndex = 0;
   bool backToMenu = 0;
+  uint8_t animationIndex = 0;
+  uint8_t sensorIndex = 0;
+  uint8_t brightnessIndex = 0;
+  uint8_t currentBrightnessIndex = 0;
 };
 } // namespace Application

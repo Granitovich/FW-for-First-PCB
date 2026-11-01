@@ -66,6 +66,7 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
 
         if(previousChangedButtonState == ButtonManager::ButtonState::LongPress)
         {
+            previousChangedButtonState = buttonState;
             return true;
         }
 
@@ -123,51 +124,46 @@ bool Application::DisplayManager::settingsHandle(ButtonManager::ButtonState butt
 
     if (buttonState == ButtonManager::ButtonState::LongPress)
     {
-        /*
-        backToMenu = true;
-
-        if(previousChangedButtonState == ButtonManager::ButtonState::LongPress)
+        if(previousSetButtonState == ButtonManager::ButtonState::LongPress)
         {
+            previousSetButtonState = buttonState;
             return true;
         }
 
-        switch (currentMenuState)
+        currentBrightnessIndex = m_storage.getSettings().brightLevel;
+
+        switch (currentSettingsIndex)
         {
-        case DisplayMainMenuState::Settings:
+        case DisplaySettingsState::Brightness:
         {
-            currentSettingsState = DisplaySettingsState::Settings_InitialState;
+            if (currentBrightnessIndex < m_storage.Brightness_Count)
+            {
+                currentBrightnessIndex++;
+            }
+            else
+            {
+                currentBrightnessIndex = 1;
+            }
+
+            //currentBrightnessIndex = static_cast<StorageManager::BrightnessModes>(currentBrightnessIndex);
+
+            StorageManager::SettingsData settingsData = {0, 0, 0, 0, 0, 0, 0};
+            settingsData.brightLevel = static_cast<uint16_t>(currentBrightnessIndex);
+
+            m_storage.writeSettings(settingsData);
+
             createSettings();
 
             break;
         }
-
-        case DisplayMainMenuState::Animation:
-        {
-           currentAnimationsState = DisplayAnimationsState::Animation_InitialState;
-           createAnimation();
-
-            break;
         }
-
-        case DisplayMainMenuState::Sensoring:
-        {
-            currentSensorState = DisplaySensorState::Sensor_InitialState;
-            createSensor();
-            break;
-        }
-
-        default:
-            break;
-        }
-        previousMenuState = currentMenuState;
-
-        */
+     
     }
-    previousSetButtonState = buttonState;
-
+    
+    
     return true;
-}
 
+}
 
 
 bool Application::DisplayManager::createMenu()
@@ -301,15 +297,16 @@ bool Application::DisplayManager::createSettings()
         
         driver.drawString(10, 0, "Brightness", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,20, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 25, "10%", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+        driver.drawString(53, 25, m_storage.getBrightness().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         driver.drawString(5, 55, "AnimateTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,75, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 80, "10s", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 80, m_storage.getAnimationTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         driver.drawString(10, 110, "SensorTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,130, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 135, "20s", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 135, m_storage.getSensorTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         break;
     }
@@ -317,11 +314,11 @@ bool Application::DisplayManager::createSettings()
     {
         driver.drawString(10, 0, "Brightness", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,20, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 25, "10%", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 25, m_storage.getBrightness().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         driver.drawString(10, 110, "SensorTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,130, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 135, "20s", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 135, m_storage.getSensorTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         break;
     }
@@ -329,11 +326,11 @@ bool Application::DisplayManager::createSettings()
     {
         driver.drawString(10, 0, "Brightness", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,20, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 25, "10%", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 25, m_storage.getBrightness().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         driver.drawString(5, 55, "AnimateTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,75, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 80, "10s", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 80, m_storage.getAnimationTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         break;
     }
@@ -341,11 +338,11 @@ bool Application::DisplayManager::createSettings()
     {
         driver.drawString(5, 55, "AnimateTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,75, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 80, "10s", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 80, m_storage.getAnimationTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         driver.drawString(10, 110, "SensorTime", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(50,130, 40, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(53, 135, "20s", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(53, 135, m_storage.getSensorTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         break;
     }

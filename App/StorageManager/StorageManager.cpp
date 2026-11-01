@@ -38,7 +38,8 @@ bool Application::StorageManager::restoreSettings() {
                                      &settingsData.versionMinor) ||
       EE_OK != EE_ReadVariable16bits(VirtualAddress::CurrentVersionParch,
                                      &settingsData.versionPatch) ||
-      !verifyData(settingsData)) {
+      !verifyData(settingsData)) 
+      {
     EE_Format(EE_FORCED_ERASE);
     EE_Init(EE_FORCED_ERASE);
 
@@ -78,6 +79,27 @@ bool Application::StorageManager::writeSettings(SettingsData &data) {
     settingsData.currentMode = data.currentMode;
     if (EE_OK != EE_WriteVariable16bits(VirtualAddress::CurrentModeAddreess,
                                         settingsData.currentMode)) {
+      return false;
+    }
+  }
+  if (data.versionMajor != 0) {
+    settingsData.versionMajor = data.versionMajor;
+    if (EE_OK != EE_WriteVariable16bits(VirtualAddress::CurrentVersionMajor,
+                                        settingsData.versionMajor)) {
+      return false;
+    }
+  }
+  if (data.versionMinor != 0) {
+    settingsData.versionMinor = data.versionMinor;
+    if (EE_OK != EE_WriteVariable16bits(VirtualAddress::CurrentVersionMinor,
+                                        settingsData.versionMinor)) {
+      return false;
+    }
+  }
+  if (data.versionPatch != 0) {
+    settingsData.versionPatch = data.versionPatch;
+    if (EE_OK != EE_WriteVariable16bits(VirtualAddress::CurrentVersionParch,
+                                        settingsData.versionPatch)) {
       return false;
     }
   }
@@ -131,10 +153,112 @@ Application::StorageManager::getVersion() const {
   etl::string<versionBufferSize> ver;
 
   char versionBuf[versionBufferSize];
-  snprintf(versionBuf, sizeof(versionBuf), "%u.%u.%u", settingsData.versionMajor,
-           settingsData.versionMinor, settingsData.versionPatch);
+  snprintf(versionBuf, sizeof(versionBuf), "%u.%u.%u",
+           settingsData.versionMajor, settingsData.versionMinor,
+           settingsData.versionPatch);
   ver.repair();
 
-  ver = versionBuf; 
+  ver = versionBuf;
+  return ver;
+}
+
+etl::string<Application::StorageManager::versionBufferSize>
+Application::StorageManager::getBrightness() const {
+  etl::string<versionBufferSize> ver;
+
+  char versionBuf[versionBufferSize];
+
+  switch (settingsData.brightLevel) {
+  case BrightnessModes::Brightness_10: {
+    snprintf(versionBuf, sizeof(versionBuf), "10%%");
+    break;
+  }
+  case BrightnessModes::Brightness_25: {
+    snprintf(versionBuf, sizeof(versionBuf), "25%%");
+    break;
+  }
+  case BrightnessModes::Brightness_50: {
+    snprintf(versionBuf, sizeof(versionBuf), "50%%");
+    break;
+  }
+  case BrightnessModes::Brightness_75: {
+    snprintf(versionBuf, sizeof(versionBuf), "75%%");
+    break;
+  }
+  case BrightnessModes::Brightness_100: {
+    snprintf(versionBuf, sizeof(versionBuf), "100%%");
+  }
+  }
+  ver.repair();
+
+  ver = versionBuf;
+  return ver;
+}
+
+etl::string<Application::StorageManager::versionBufferSize>
+Application::StorageManager::getAnimationTime() const {
+  etl::string<versionBufferSize> ver;
+
+  char versionBuf[versionBufferSize];
+
+  switch (settingsData.animationTime) {
+  case AnimationTimeModes::AnimationTime_5s: {
+    snprintf(versionBuf, sizeof(versionBuf), "5s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_10s: {
+    snprintf(versionBuf, sizeof(versionBuf), "10s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_30s: {
+    snprintf(versionBuf, sizeof(versionBuf), "30s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_45s: {
+    snprintf(versionBuf, sizeof(versionBuf), "45s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_60s: {
+    snprintf(versionBuf, sizeof(versionBuf), "60s");
+    break;
+  }
+  }
+  ver.repair();
+
+  ver = versionBuf;
+  return ver;
+}
+
+etl::string<Application::StorageManager::versionBufferSize>
+Application::StorageManager::getSensorTime() const {
+  etl::string<versionBufferSize> ver;
+
+  char versionBuf[versionBufferSize];
+
+  switch (settingsData.sensorTime) {
+  case SensorTimeModes::SensorTime_5s: {
+    snprintf(versionBuf, sizeof(versionBuf), "5s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_10s: {
+    snprintf(versionBuf, sizeof(versionBuf), "10s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_30s: {
+    snprintf(versionBuf, sizeof(versionBuf), "30s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_45s: {
+    snprintf(versionBuf, sizeof(versionBuf), "45s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_60s: {
+    snprintf(versionBuf, sizeof(versionBuf), "60s");
+    break;
+  }
+  }
+  ver.repair();
+
+  ver = versionBuf;
   return ver;
 }
