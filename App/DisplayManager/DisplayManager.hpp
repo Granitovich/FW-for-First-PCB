@@ -67,5 +67,7 @@ private:
   uint8_t sensorIndex = 0;
   uint8_t brightnessIndex = 0;
   uint8_t currentBrightnessIndex = 0;
+  uint8_t currentAnimationIndex = 0;
+  uint8_t currentSensorIndex = 0;
 };
 } // namespace Application

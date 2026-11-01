@@ -117,16 +117,16 @@ bool Application::StorageManager::verifyData(SettingsData &data) {
     return false;
   }
 
-  if ((data.animationTime != AnimationTimeModes::AnimationTime_5s) &&
-      (data.animationTime != AnimationTimeModes::AnimationTime_10s) &&
+  if ((data.animationTime != AnimationTimeModes::AnimationTime_10s) &&
+      (data.animationTime != AnimationTimeModes::AnimationTime_20s) &&
       (data.animationTime != AnimationTimeModes::AnimationTime_30s) &&
       (data.animationTime != AnimationTimeModes::AnimationTime_45s) &&
       (data.animationTime != AnimationTimeModes::AnimationTime_60s)) {
     return false;
   }
 
-  if ((data.sensorTime != SensorTimeModes::SensorTime_5s) &&
-      (data.sensorTime != SensorTimeModes::SensorTime_10s) &&
+  if ((data.sensorTime != SensorTimeModes::SensorTime_10s) &&
+      (data.sensorTime != SensorTimeModes::SensorTime_20s) &&
       (data.sensorTime != SensorTimeModes::SensorTime_30s) &&
       (data.sensorTime != SensorTimeModes::SensorTime_45s) &&
       (data.sensorTime != SensorTimeModes::SensorTime_60s)) {
@@ -186,7 +186,7 @@ Application::StorageManager::getBrightness() const {
     break;
   }
   case BrightnessModes::Brightness_100: {
-    snprintf(versionBuf, sizeof(versionBuf), "100%%");
+    snprintf(versionBuf, sizeof(versionBuf), "MAX");
   }
   }
   ver.repair();
@@ -202,12 +202,12 @@ Application::StorageManager::getAnimationTime() const {
   char versionBuf[versionBufferSize];
 
   switch (settingsData.animationTime) {
-  case AnimationTimeModes::AnimationTime_5s: {
-    snprintf(versionBuf, sizeof(versionBuf), "5s");
-    break;
-  }
   case AnimationTimeModes::AnimationTime_10s: {
     snprintf(versionBuf, sizeof(versionBuf), "10s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_20s: {
+    snprintf(versionBuf, sizeof(versionBuf), "20s");
     break;
   }
   case AnimationTimeModes::AnimationTime_30s: {
@@ -236,12 +236,12 @@ Application::StorageManager::getSensorTime() const {
   char versionBuf[versionBufferSize];
 
   switch (settingsData.sensorTime) {
-  case SensorTimeModes::SensorTime_5s: {
-    snprintf(versionBuf, sizeof(versionBuf), "5s");
-    break;
-  }
   case SensorTimeModes::SensorTime_10s: {
     snprintf(versionBuf, sizeof(versionBuf), "10s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_20s: {
+    snprintf(versionBuf, sizeof(versionBuf), "20s");
     break;
   }
   case SensorTimeModes::SensorTime_30s: {

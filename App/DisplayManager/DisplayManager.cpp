@@ -131,40 +131,84 @@ bool Application::DisplayManager::settingsHandle(ButtonManager::ButtonState butt
         }
 
         currentBrightnessIndex = m_storage.getSettings().brightLevel;
+        currentAnimationIndex = m_storage.getSettings().animationTime;
+        currentSensorIndex = m_storage.getSettings().sensorTime;
 
         switch (currentSettingsIndex)
         {
-        case DisplaySettingsState::Brightness:
-        {
-            if (currentBrightnessIndex < m_storage.Brightness_Count)
+            case DisplaySettingsState::Brightness:
             {
-                currentBrightnessIndex++;
+                if (currentBrightnessIndex < m_storage.Brightness_Count)
+                {
+                    currentBrightnessIndex++;
+                }
+                else
+                {
+                    currentBrightnessIndex = 1;
+                }
+
+                StorageManager::SettingsData settingsData = {0, 0, 0, 0, 0, 0, 0};
+                settingsData.brightLevel = static_cast<uint16_t>(currentBrightnessIndex);
+
+                m_storage.writeSettings(settingsData);
+
+                currentSettingsState = DisplaySettingsState::Brightness;
+                createSettings();
+
+                break;
             }
-            else
+            case DisplaySettingsState::AnimationTime:
             {
-                currentBrightnessIndex = 1;
+                if (currentAnimationIndex < m_storage.AnimationTime_Count)
+                {
+                    currentAnimationIndex++;
+                }
+                else
+                {
+                    currentAnimationIndex = 1;
+                }
+
+                StorageManager::SettingsData settingsData = {0, 0, 0, 0, 0, 0, 0};
+                settingsData.animationTime = static_cast<uint16_t>(currentAnimationIndex);
+
+                m_storage.writeSettings(settingsData);
+
+                currentSettingsState = DisplaySettingsState::AnimationTime;
+                createSettings();
+
+                break;
             }
+            case DisplaySettingsState::SensTime:
+            {
+                if (currentSensorIndex < m_storage.SensorTime_Count)
+                {
+                    currentSensorIndex++;
+                }
+                else
+                {
+                    currentSensorIndex = 1;
+                }
 
-            //currentBrightnessIndex = static_cast<StorageManager::BrightnessModes>(currentBrightnessIndex);
+                StorageManager::SettingsData settingsData = {0, 0, 0, 0, 0, 0, 0};
+                settingsData.sensorTime = static_cast<uint16_t>(currentSensorIndex);
 
-            StorageManager::SettingsData settingsData = {0, 0, 0, 0, 0, 0, 0};
-            settingsData.brightLevel = static_cast<uint16_t>(currentBrightnessIndex);
+                m_storage.writeSettings(settingsData);
 
-            m_storage.writeSettings(settingsData);
+                currentSettingsState = DisplaySettingsState::SensTime;
+                createSettings();
 
-            createSettings();
-
-            break;
-        }
-        }
+                break;
+            }
      
+            default:
+                break;
+            }
+    
+    
     }
-    
-    
+    previousSetButtonState = buttonState;
     return true;
-
 }
-
 
 bool Application::DisplayManager::createMenu()
 {

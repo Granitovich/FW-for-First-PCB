@@ -9,7 +9,7 @@ namespace Application
     public:
         typedef enum 
         {
-            ShortPress,
+            ShortPress = 1,
             LongPress,
             NoPress,
             Pressing
@@ -27,7 +27,7 @@ namespace Application
         ButtonState currentSetButtonState     = NoPress;        
 
         const uint32_t shortPressThreshold = 1000; // 1 second threshold for short press
-        const uint32_t longPressThreshold = 2000; // 3 seconds threshold for long press
+        const uint32_t longPressThreshold = 2000; // 2 seconds threshold for long press
 
         uint32_t buttonChangedPressTime = 0;
         uint32_t buttonSetPressTime     = 0;

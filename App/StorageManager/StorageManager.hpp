@@ -45,8 +45,8 @@ namespace Application
 
         typedef enum 
         {
-            AnimationTime_5s  = 1,
-            AnimationTime_10s = 2,
+            AnimationTime_10s  = 1,
+            AnimationTime_20s = 2,
             AnimationTime_30s = 3,
             AnimationTime_45s = 4,
             AnimationTime_60s = 5,
@@ -55,8 +55,8 @@ namespace Application
 
         typedef enum
         {
-            SensorTime_5s  = 1,
-            SensorTime_10s = 2,
+            SensorTime_10s  = 1,
+            SensorTime_20s = 2,
             SensorTime_30s = 3,
             SensorTime_45s = 4,
             SensorTime_60s = 5,
