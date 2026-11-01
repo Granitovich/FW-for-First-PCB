@@ -102,11 +102,29 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
     }
     previousChangedButtonState = buttonState;
 
+
+    if(currentMenuState == DisplayMainMenuState::Animation && backToMenu )
+    {
+        createAnimation();
+    }
+
+    else if(currentMenuState == DisplayMainMenuState::Sensoring && backToMenu)
+    {
+        createSensor();
+    }
+
     return true;
 }
 
+
+
 bool Application::DisplayManager::settingsHandle(ButtonManager::ButtonState buttonState)
 {
+    if(!backToMenu )
+    {
+        return true;
+    }
+
     if (buttonState == ButtonManager::ButtonState::ShortPress)
     {
         if (currentSettingsIndex < DisplaySettingsState::Settings_Count - 1)
@@ -280,7 +298,8 @@ bool Application::DisplayManager::createSensor()
         driver.drawString(0, 10, "Sensor Data", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawString(0, 40, "Temperature:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawString(0, 70, "Humidity:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 100, "Pressure: ", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(0, 100, "SensTime: ", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(0, 130, m_storage.getSensorTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         currentSensorState = DisplaySensorState::Monitoring;
 
@@ -289,7 +308,7 @@ bool Application::DisplayManager::createSensor()
     case DisplaySensorState::Monitoring:
     {
         // check sensor data and change display
-        driver.drawString(110, 100, "20", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(10, 130, "SensWork", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         break;
     }
@@ -309,7 +328,7 @@ bool Application::DisplayManager::createAnimation()
     case DisplayAnimationsState::Animation_InitialState:
     {
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 10, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(0, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
    
         currentAnimationsState = DisplayAnimationsState::Animate;
 
@@ -318,7 +337,7 @@ bool Application::DisplayManager::createAnimation()
     case DisplayAnimationsState::Animate:
     {
         // check sensor data and change display
-        driver.drawString(110, 100, "check", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(10, 100, "AnimWork", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         break;
     }
