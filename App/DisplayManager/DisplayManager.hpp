@@ -1,78 +1,73 @@
 #pragma once
 
-#include "DisplayDriver/DisplayDriver.hpp" 
 #include "ButtonManager/ButtonManager.hpp"
+#include "DisplayDriver/DisplayDriver.hpp"
+#include "StorageManager/StorageManager.hpp"
 
-namespace Application
-{
-    class DisplayManager 
-    {
 
-    public:
-        DisplayManager(DriverLayer::DisplayDriver &dispDriver, ButtonManager &btnManager) : driver(dispDriver), m_btnManager(btnManager), currentState(DisplayState::MAIN_MENU) {}
-        bool createInit();
-        bool createMenu();
-        bool createSettings();
-        bool createAnimation();
-        bool createSensor();
-        bool run();
-        bool mainMenuHadle(ButtonManager::ButtonState buttonState);
-        bool settingsHandle(ButtonManager::ButtonState buttonState);
-        bool animationHandle(ButtonManager::ButtonState buttonState);
-        bool sensorHandle(ButtonManager::ButtonState buttonState);
+namespace Application {
+class DisplayManager {
 
-        typedef enum 
-        {
-            ANIMATION,
-            MAIN_MENU,
-            SETTINGS,
-            SENSOR_DATA
-        } DisplayState;
+public:
+  DisplayManager(DriverLayer::DisplayDriver &dispDriver,
+                 ButtonManager &btnManager, StorageManager &storage)
+      : driver(dispDriver), m_btnManager(btnManager), m_storage(storage),
+        currentState(DisplayState::MAIN_MENU) {}
+  bool createInit();
+  bool createMenu();
+  bool createSettings();
+  bool createAnimation();
+  bool createSensor();
+  bool run();
+  bool mainMenuHadle(ButtonManager::ButtonState buttonState);
+  bool settingsHandle(ButtonManager::ButtonState buttonState);
+  bool animationHandle(ButtonManager::ButtonState buttonState);
+  bool sensorHandle(ButtonManager::ButtonState buttonState);
+  bool brightnessHandle();
 
-        typedef enum 
-        {
-            Settings = 0,
-            Animation,
-            Sensoring,
-            StateCount,
-            MainMenu_InitialState
-        } DisplayMainMenuState;
+  typedef enum { ANIMATION, MAIN_MENU, SETTINGS, SENSOR_DATA } DisplayState;
 
-        typedef enum 
-        {
-            Brightness = 0,
-            AnimationTime,
-            SensTime,
-            Settings_Count,
-            Settings_InitialState
-        } DisplaySettingsState;
+  typedef enum {
+    Settings = 0,
+    Animation,
+    Sensoring,
+    StateCount,
+    MainMenu_InitialState
+  } DisplayMainMenuState;
 
-        typedef enum 
-        {
-            Animate,
-            Animation_InitialState
-        } DisplayAnimationsState;
+  typedef enum {
+    Brightness = 0,
+    AnimationTime,
+    SensTime,
+    Settings_Count,
+    Settings_InitialState
+  } DisplaySettingsState;
 
-        typedef enum 
-        {
-            Monitoring = 0,
-            Sensor_InitialState
-        } DisplaySensorState;
+  typedef enum { Animate, Animation_InitialState } DisplayAnimationsState;
 
-    private:
-        DriverLayer::DisplayDriver &driver;
-        ButtonManager &m_btnManager;
-        DisplayState currentState;
-        DisplayMainMenuState currentMenuState;
-        DisplayMainMenuState previousMenuState;
-        DisplaySensorState   currentSensorState;
-        DisplaySettingsState currentSettingsState;
-        DisplayAnimationsState currentAnimationsState;
-        ButtonManager::ButtonState previousChangedButtonState;
-        ButtonManager::ButtonState previousSetButtonState;
-        uint8_t currentMenuIndex = 0;
-        uint8_t currentSettingsIndex = 0;
-        uint8_t menuIndex = 0;    
-        bool backToMenu = 0;
-    };
-}
+  typedef enum { Monitoring = 0, Sensor_InitialState } DisplaySensorState;
+
+private:
+  DriverLayer::DisplayDriver &driver;
+  ButtonManager &m_btnManager;
+  StorageManager &m_storage;
+  DisplayState currentState;
+  DisplayMainMenuState currentMenuState;
+  DisplayMainMenuState previousMenuState;
+  DisplaySensorState currentSensorState;
+  DisplaySettingsState currentSettingsState;
+  DisplayAnimationsState currentAnimationsState;
+  ButtonManager::ButtonState previousChangedButtonState;
+  ButtonManager::ButtonState previousSetButtonState;
+  uint8_t currentMenuIndex = 0;
+  uint8_t currentSettingsIndex = 0;
+  uint8_t menuIndex = 0;
+  bool backToMenu = 0;
+  uint8_t animationIndex = 0;
+  uint8_t sensorIndex = 0;
+  uint8_t brightnessIndex = 0;
+  uint8_t currentBrightnessIndex = 0;
+  uint8_t currentAnimationIndex = 0;
+  uint8_t currentSensorIndex = 0;
+};
+} // namespace Application

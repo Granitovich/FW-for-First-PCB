@@ -63,7 +63,7 @@ namespace DriverLayer
         DisplayStatus fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t r, uint16_t color);
 
 
-
+        // TODO: Upgrade all func
         //void drawString(uint16_t x, uint16_t y, const char *str, FontDef font, uint16_t color, uint16_t bgcolor);
         void invertColors(bool invert);
         void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color);
@@ -99,14 +99,13 @@ namespace DriverLayer
             YELLOW      = 0xFFE0,
             WHITE       = 0xFFFF,
 
-            // Відтінки сірого (Grayscale / Gray) — від темного до світлого
-            DARKER_GRAY = 0x2104, // Дуже темний сірий
-            DARK_GRAY   = 0x4208, // Темно-сірий
-            GRAY        = 0x8410, // Класичний сірий (50%)
-            LIGHT_GRAY  = 0xC618, // Світло-сірий
-            SILVER      = 0xCE79, // Сріблястий
+           
+            DARKER_GRAY = 0x2104, 
+            DARK_GRAY   = 0x4208, 
+            GRAY        = 0x8410, 
+            LIGHT_GRAY  = 0xC618, 
+            SILVER      = 0xCE79, 
 
-            // Додаткові корисні відтінки (помаранчевий, рожевий, золотий тощо)
             ORANGE      = 0xFD20,
             GOLD        = 0xFEA0,
             YELLOW_GREEN= 0x9E66,
