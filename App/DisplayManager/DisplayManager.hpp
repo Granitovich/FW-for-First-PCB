@@ -81,6 +81,9 @@ private:
   char *fileName = {"images.bin"};
 
   static constexpr uint16_t imagesCount = 2;
+  uint32_t imageShowedLastTime = 0;
+  bool isAnimationRunning = false;
+  const uint32_t backFromAnimationDelay = 100; 
   
 };
 } // namespace Application

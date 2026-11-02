@@ -66,6 +66,11 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
             currentMenuState = static_cast<DisplayMainMenuState>(DisplayMainMenuState::MainMenu_InitialState);
             currentMenuIndex = 0;
             backToMenu = false;
+            if(isAnimationRunning)
+            {
+                isAnimationRunning = false;
+                HAL_Delay(backFromAnimationDelay);
+            }
         }
         createMenu();
 
@@ -111,18 +116,20 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
         }
         previousMenuState = currentMenuState;
     }
-    previousChangedButtonState = buttonState;
+    
 
 
-    if(currentMenuState == DisplayMainMenuState::Animation && backToMenu )
+    if(currentMenuState == DisplayMainMenuState::Animation && backToMenu && buttonState != ButtonManager::ButtonState::Pressing)
     {
         createAnimation();
     }
 
-    else if(currentMenuState == DisplayMainMenuState::Sensoring && backToMenu)
+    else if(currentMenuState == DisplayMainMenuState::Sensoring && backToMenu && buttonState != ButtonManager::ButtonState::Pressing)
     {
         createSensor();
     }
+
+    previousChangedButtonState = buttonState;
 
     return true;
 }
@@ -350,6 +357,7 @@ bool Application::DisplayManager::createAnimation()
     case DisplayAnimationsState::Animate:
     {
         animation();
+        isAnimationRunning = true;
 
         break;
     }
@@ -433,21 +441,32 @@ bool Application::DisplayManager::createSettings()
 bool Application::DisplayManager::animation()
 {
     static uint16_t counter;
-    
+    uint32_t currentTime = HAL_GetTick();
+
+    if(currentTime - imageShowedLastTime <= m_storage.getSettings().animationTime * 1000)
+    {
+        return true;
+        
+    }
+
     if(counter >= imagesCount)
     {
         m_sdCardManager.openFile(fileName);
         counter = 0;
     }
-
+    else
+    {
+        counter++;
+    }
+    
     uint32_t offset = counter * frameSize;
 
     m_sdCardManager.seekFile(fileName, offset);
     m_sdCardManager.readFile(imageBuffer, frameSize);
 
     driver.drawImage(imageBuffer);
-    HAL_Delay(m_storage.getSettings().animationTime * 1000);
 
+    imageShowedLastTime = currentTime;
     
     return true;
 }
