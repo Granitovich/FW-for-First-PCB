@@ -22,7 +22,7 @@ bool Application::SDCardManager::openFile(char* filename)
     return true;
     
 }
-bool Application::SDCardManager::readFile(uint16_t* imageBuffer, uint32_t bufferSize) 
+bool Application::SDCardManager::readImage(uint16_t* imageBuffer, uint32_t bufferSize) 
 {
     FRESULT res;
     res = f_read(&file, imageBuffer, bufferSize, &br);
@@ -32,10 +32,31 @@ bool Application::SDCardManager::readFile(uint16_t* imageBuffer, uint32_t buffer
     }
     return true;
 }
+bool Application::SDCardManager::readFile(char* fileBuffer) 
+{
+    FRESULT res;
+    res = f_read(&file, fileBuffer,  f_size(&file), &br);
+    if (res != FR_OK || br != f_size(&file))
+    {
+        return false;
+    }
+    return true;
+}
 bool Application::SDCardManager::seekFile(char* filename, uint32_t offset) 
 {
     FRESULT res;
     res = f_lseek(&file, offset);
+    if (res != FR_OK)
+    {
+        return false;
+    }
+    return true;
+}
+
+bool Application::SDCardManager::closeFile() 
+{
+    FRESULT res;
+    res = f_close(&file);
     if (res != FR_OK)
     {
         return false;

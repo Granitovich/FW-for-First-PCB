@@ -2,6 +2,7 @@
 #include <etl/vector.h>
 #include <etl/to_string.h>
 #include <stdint.h>
+#include <etl/string.h>
 
 bool Application::DisplayManager::createInit()
 {
@@ -91,6 +92,7 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
         case DisplayMainMenuState::Settings:
         {
             currentSettingsState = DisplaySettingsState::Settings_InitialState;
+            currentSettingsIndex = 0;
             createSettings();
 
             break;
@@ -348,7 +350,12 @@ bool Application::DisplayManager::createAnimation()
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawString(0, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
-        m_sdCardManager.openFile(fileName);
+        m_sdCardManager.openFile(fileCountName);
+        m_sdCardManager.readFile(readWriteBuffer);
+        m_sdCardManager.closeFile();
+        m_sdCardManager.openFile(fileImagesName);
+
+        frameCount = getFrameCount();
 
         currentAnimationsState = DisplayAnimationsState::Animate;
 
@@ -449,9 +456,9 @@ bool Application::DisplayManager::animation()
         
     }
 
-    if(counter >= imagesCount)
+    if(counter >= frameCount)
     {
-        m_sdCardManager.openFile(fileName);
+        m_sdCardManager.openFile(fileImagesName);
         counter = 0;
     }
     else
@@ -461,12 +468,33 @@ bool Application::DisplayManager::animation()
     
     uint32_t offset = counter * frameSize;
 
-    m_sdCardManager.seekFile(fileName, offset);
-    m_sdCardManager.readFile(imageBuffer, frameSize);
+    m_sdCardManager.seekFile(fileImagesName, offset);
+    m_sdCardManager.readImage(imageBuffer, frameSize);
 
     driver.drawImage(imageBuffer);
 
     imageShowedLastTime = currentTime;
     
     return true;
+}
+
+uint32_t Application::DisplayManager::getFrameCount()
+{
+    etl::string<maxCountLength> raw_chars(readWriteBuffer, maxCountLength);
+
+    uint32_t result = 0;
+
+    for (char c : raw_chars) 
+    {
+        if (c != 'X' && c != 'x') 
+        {
+            if (c >= '0' && c <= '9') 
+            {
+                result = (result * 10) + (c - '0');
+            }
+        }
+    }
+    
+    return result;
+
 }

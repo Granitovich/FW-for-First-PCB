@@ -15,8 +15,10 @@ namespace Application
 
         bool init();
         bool openFile(char* filename);
-        bool readFile(uint16_t* imageBuffer, uint32_t bufferSize);
+        bool readImage(uint16_t* imageBuffer, uint32_t bufferSize);
+        bool readFile(char* fileBuffer);
         bool seekFile(char* filename, uint32_t offset);
+        bool closeFile();
        
     private:
        FATFS fs;
