@@ -32,12 +32,15 @@ void App::run()
   Application::StorageManager storage;
   Application::ButtonManager btnManager(buttonChangedPressed, buttonSetPressed);
   Application::SDCardManager sdCardManager;
-  sdCardManager.init();
   Application::DisplayManager display(driver, btnManager, storage, sdCardManager);
 
   storage.restoreSettings();
   
-  display.createInit();
+  if(!display.createInit())
+  {
+    while(true)
+    {}
+  }
 
   while((true))
   {

@@ -50,6 +50,8 @@ namespace DriverLayer
         explicit DisplayDriver(SPI_HandleTypeDef *hspi, DriverGpio &gpios);
 
         DisplayStatus init();
+        DisplayStatus backlightOn();
+        DisplayStatus backlightOff();
         DisplayStatus setRotation(const uint8_t rotation);
         DisplayStatus drawPixel(const uint16_t x, const uint16_t y, const uint16_t color);
         DisplayStatus drawImage(const uint16_t* image);

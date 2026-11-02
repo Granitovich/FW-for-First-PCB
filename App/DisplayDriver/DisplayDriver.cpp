@@ -128,8 +128,18 @@ DisplayDriver::DisplayStatus DisplayDriver::init()
 
     csSet(true);
     setRotation(m_config.rotationValue);
-    blSet(true);
     
+    return DisplayStatus::OK;
+}
+DisplayDriver::DisplayStatus DisplayDriver::backlightOn()
+{
+    blSet(true);
+    return DisplayStatus::OK;
+}
+
+DisplayDriver::DisplayStatus DisplayDriver::backlightOff()
+{
+    blSet(false);
     return DisplayStatus::OK;
 }
 

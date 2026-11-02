@@ -16,7 +16,7 @@ extern SPI_HandleTypeDef 	hspi2;
 #define HSPI_SDCARD 		&hspi2
 #define SD_CS_PORT 			SD_CS_GPIO_Port
 #define SD_CS_PIN 			SD_CS_Pin
-#define SPI_TIMEOUT 		100
+#define SPI_TIMEOUT 		10
 
 //-----[ MMC/SDC Commands ]-----
 #define CMD0     (0x40+0)     	/* GO_IDLE_STATE */

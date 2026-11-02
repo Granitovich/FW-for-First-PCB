@@ -7,9 +7,20 @@ bool Application::DisplayManager::createInit()
 {
 
     driver.init();
+
+    if(!m_sdCardManager.init())
+    {
+        driver.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
+        driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawImage((const uint16_t*)Images::MemoryCardErrorPortrait);
+        driver.backlightOn();
+        return false;
+    }
+
     driver.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
 
     driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+    driver.backlightOn();
 
     driver.drawString(20, 10, "MemoryHub", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GOLD, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(20, 35, "Made with", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::EMERALD, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
