@@ -11,7 +11,7 @@ bool Application::SDCardManager::init()
 	return true;
 }
 
-bool Application::SDCardManager::openFile(char* filename) 
+bool Application::SDCardManager::openFile(const char* filename) 
 {
     FRESULT res;
     res = f_open(&file, filename, FA_READ);
@@ -42,7 +42,7 @@ bool Application::SDCardManager::readFile(char* fileBuffer)
     }
     return true;
 }
-bool Application::SDCardManager::seekFile(char* filename, uint32_t offset) 
+bool Application::SDCardManager::seekFile(const char* filename, uint32_t offset) 
 {
     FRESULT res;
     res = f_lseek(&file, offset);

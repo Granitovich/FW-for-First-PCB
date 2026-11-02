@@ -14,10 +14,10 @@ namespace Application
         SDCardManager() {}
 
         bool init();
-        bool openFile(char* filename);
+        bool openFile(const char* filename);
         bool readImage(uint16_t* imageBuffer, uint32_t bufferSize);
         bool readFile(char* fileBuffer);
-        bool seekFile(char* filename, uint32_t offset);
+        bool seekFile(const char* filename, uint32_t offset);
         bool closeFile();
        
     private:

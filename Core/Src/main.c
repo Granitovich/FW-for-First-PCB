@@ -78,25 +78,12 @@ static void MX_I2C2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
-static FATFS fs;
-// Файловий дескриптор
-static FIL fil;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-FRESULT fatfs_init()
-{
-	FRESULT res;
-	 // 1. Монтуємо файлову систему
-	    res = f_mount(&fs, "", 1);
-	    if (res != FR_OK )
-	    {
-	       
-	        return res;
-	    }
-	    return res;
-}
+
 /* USER CODE END 0 */
 
 /**

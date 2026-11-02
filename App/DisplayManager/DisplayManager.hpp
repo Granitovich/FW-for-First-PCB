@@ -71,21 +71,23 @@ private:
   uint8_t currentBrightnessIndex = 0;
   uint8_t currentAnimationIndex = 0;
   uint8_t currentSensorIndex = 0;
+
+  static constexpr uint16_t maxCountLength = 5;
+  static constexpr uint16_t maxFileNameLength = 20;
+
   bool animation();
   uint32_t getFrameCount();
+  etl::string<Application::DisplayManager::maxCountLength> getImagesCount();
   
-  static constexpr uint16_t maxCountLength = 5;
-
   uint16_t imageBuffer[DriverLayer::DisplayDriver::DisplayDriverConstant::WIDTH * DriverLayer::DisplayDriver::DisplayDriverConstant::HEIGHT];
   char readWriteBuffer[maxCountLength];
  
   uint16_t (*imagePtr)[DriverLayer::DisplayDriver::DisplayDriverConstant::HEIGHT] = (uint16_t(*)[DriverLayer::DisplayDriver::DisplayDriverConstant::HEIGHT])imageBuffer;
 
   static constexpr uint16_t frameSize = DriverLayer::DisplayDriver::DisplayDriverConstant::WIDTH * DriverLayer::DisplayDriver::DisplayDriverConstant::HEIGHT * 2; // 40960
-  char *fileImagesName = {"images.bin"};
-  char *fileCountName = {"ImCount.txt"};
+  char fileImagesName[maxFileNameLength] = {"images.bin"};
+  char fileCountName [maxFileNameLength] = {"ImCount.txt"};
 
-  static constexpr uint16_t imagesCount = 2;
   uint32_t imageShowedLastTime = 0;
   bool isAnimationRunning = false;
   const uint32_t backFromAnimationDelay = 100; 

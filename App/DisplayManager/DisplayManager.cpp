@@ -348,14 +348,21 @@ bool Application::DisplayManager::createAnimation()
     case DisplayAnimationsState::Animation_InitialState:
     {
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(15, 10, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(400, 50, "Mode", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
         m_sdCardManager.openFile(fileCountName);
         m_sdCardManager.readFile(readWriteBuffer);
         m_sdCardManager.closeFile();
-        m_sdCardManager.openFile(fileImagesName);
 
         frameCount = getFrameCount();
+        
+
+        driver.drawString(0, 90, "Image found", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(0, 110, "In SD card:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(50, 130, getImagesCount().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+        m_sdCardManager.openFile(fileImagesName);
 
         currentAnimationsState = DisplayAnimationsState::Animate;
 
@@ -447,7 +454,7 @@ bool Application::DisplayManager::createSettings()
 
 bool Application::DisplayManager::animation()
 {
-    static uint16_t counter;
+    static uint32_t counter;
     uint32_t currentTime = HAL_GetTick();
 
     if(currentTime - imageShowedLastTime <= m_storage.getSettings().animationTime * 1000)
@@ -497,4 +504,16 @@ uint32_t Application::DisplayManager::getFrameCount()
     
     return result;
 
+}
+
+etl::string<Application::DisplayManager::maxCountLength> Application::DisplayManager::getImagesCount() 
+{
+  etl::string<maxCountLength> ver;
+
+  char countBuf[maxCountLength];
+  snprintf(countBuf, sizeof(countBuf), "%lu", frameCount);
+  ver.repair();
+
+  ver = countBuf;
+  return ver;
 }
