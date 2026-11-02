@@ -57,7 +57,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Middlewares/Third_Party/EEPROM_Emul/Core/eeprom_emul.c
     Middlewares/Third_Party/EEPROM_Emul/Porting/STM32G0/flash_interface.c
     FATFS/Target/user_diskio.c
-    FATFS/Target/user_diskio_spi.c
+    SDCard/FATFS_SD.c
 )
 
 # Add include paths
@@ -66,7 +66,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     Middlewares
     Middlewares/Third_Party/EEPROM_Emul/Core
     Middlewares/Third_Party/EEPROM_Emul/Porting/STM32G0
-    
+    SDCard
     # Add user defined include paths
 )
 
