@@ -101,8 +101,8 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 #define SD_SPI_HANDLE     hspi2
-#define SPI1_CS_GPIO_Port GPIOC
-#define SPI1_CS_Pin       GPIO_PIN_10
+#define SPI1_CS_GPIO_Port SD_CS_GPIO_Port
+#define SPI1_CS_Pin       SD_CS_Pin
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

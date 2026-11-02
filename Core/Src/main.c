@@ -78,12 +78,25 @@ static void MX_I2C2_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_CRC_Init(void);
 /* USER CODE BEGIN PFP */
-
+static FATFS fs;
+// Файловий дескриптор
+static FIL fil;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+FRESULT fatfs_init()
+{
+	FRESULT res;
+	 // 1. Монтуємо файлову систему
+	    res = f_mount(&fs, "", 1);
+	    if (res != FR_OK )
+	    {
+	       
+	        return res;
+	    }
+	    return res;
+}
 /* USER CODE END 0 */
 
 /**
@@ -131,7 +144,9 @@ int main(void)
   // ST7735_Backlight_On();
   // ST7735_FillScreen(ST7735_GREEN);
   // ST7735_DrawLine(10, 10, 20, 20, ST7735_RED);
-  mainCpp();
+  disk_initialize(0); 
+  fatfs_init();
+   mainCpp();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -352,7 +367,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -392,7 +407,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_4;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;

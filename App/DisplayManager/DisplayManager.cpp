@@ -329,15 +329,16 @@ bool Application::DisplayManager::createAnimation()
     {
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawString(0, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-   
+
+        m_sdCardManager.openFile(fileName);
+
         currentAnimationsState = DisplayAnimationsState::Animate;
 
         break;
     }
     case DisplayAnimationsState::Animate:
     {
-        // check sensor data and change display
-        driver.drawString(10, 100, "AnimWork", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        animation();
 
         break;
     }
@@ -415,5 +416,27 @@ bool Application::DisplayManager::createSettings()
     }
     }
 
+    return true;
+}
+
+bool Application::DisplayManager::animation()
+{
+    static uint16_t counter;
+    
+    if(counter >= imagesCount)
+    {
+        m_sdCardManager.openFile(fileName);
+        counter = 0;
+    }
+
+    uint32_t offset = counter * frameSize;
+
+    m_sdCardManager.seekFile(fileName, offset);
+    m_sdCardManager.readFile(imageBuffer, frameSize);
+
+    driver.drawImage(imageBuffer);
+    HAL_Delay(m_storage.getSettings().animationTime * 1000);
+
+    
     return true;
 }
