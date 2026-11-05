@@ -131,7 +131,9 @@ int main(void)
   // ST7735_Backlight_On();
   // ST7735_FillScreen(ST7735_GREEN);
   // ST7735_DrawLine(10, 10, 20, 20, ST7735_RED);
-  mainCpp();
+
+  //fatfs_init();
+   mainCpp();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -358,7 +360,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi2.Init.CRCPolynomial = 7;
   hspi2.Init.CRCLength = SPI_CRC_LENGTH_DATASIZE;
-  hspi2.Init.NSSPMode = SPI_NSS_PULSE_ENABLE;
+  hspi2.Init.NSSPMode = SPI_NSS_PULSE_DISABLE;
   if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
     Error_Handler();

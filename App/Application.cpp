@@ -6,6 +6,7 @@
 #include "DisplayManager/DisplayManager.hpp"
 #include "ButtonManager/ButtonManager.hpp"
 #include "StorageManager/StorageManager.hpp"
+#include "SDCardManager/SDCardManager.hpp"
 #include "main.h"
 #include "stm32g0xx_hal.h"
 extern SPI_HandleTypeDef hspi3;
@@ -30,11 +31,16 @@ void App::run()
   DriverLayer::DisplayDriver driver(&hspi3, gpios);
   Application::StorageManager storage;
   Application::ButtonManager btnManager(buttonChangedPressed, buttonSetPressed);
-  Application::DisplayManager display(driver, btnManager, storage);
+  Application::SDCardManager sdCardManager;
+  Application::DisplayManager display(driver, btnManager, storage, sdCardManager);
 
   storage.restoreSettings();
   
-  display.createInit();
+  if(!display.createInit())
+  {
+    while(true)
+    {}
+  }
 
   while((true))
   {

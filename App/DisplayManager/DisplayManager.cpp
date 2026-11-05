@@ -2,14 +2,26 @@
 #include <etl/vector.h>
 #include <etl/to_string.h>
 #include <stdint.h>
+#include <etl/string.h>
 
 bool Application::DisplayManager::createInit()
 {
 
     driver.init();
+
+    if(!m_sdCardManager.init())
+    {
+        driver.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
+        driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawImage((const uint16_t*)Images::MemoryCardErrorPortrait);
+        driver.backlightOn();
+        return false;
+    }
+
     driver.setRotation(DriverLayer::DisplayDriver::DisplayDriverRotation::Portrait);
 
     driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+    driver.backlightOn();
 
     driver.drawString(20, 10, "MemoryHub", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GOLD, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
     driver.drawString(20, 35, "Made with", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::EMERALD, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
@@ -55,6 +67,11 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
             currentMenuState = static_cast<DisplayMainMenuState>(DisplayMainMenuState::MainMenu_InitialState);
             currentMenuIndex = 0;
             backToMenu = false;
+            if(isAnimationRunning)
+            {
+                isAnimationRunning = false;
+                HAL_Delay(backFromAnimationDelay);
+            }
         }
         createMenu();
 
@@ -75,6 +92,7 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
         case DisplayMainMenuState::Settings:
         {
             currentSettingsState = DisplaySettingsState::Settings_InitialState;
+            currentSettingsIndex = 0;
             createSettings();
 
             break;
@@ -100,18 +118,20 @@ bool Application::DisplayManager::mainMenuHadle(ButtonManager::ButtonState butto
         }
         previousMenuState = currentMenuState;
     }
-    previousChangedButtonState = buttonState;
+    
 
 
-    if(currentMenuState == DisplayMainMenuState::Animation && backToMenu )
+    if(currentMenuState == DisplayMainMenuState::Animation && backToMenu && buttonState != ButtonManager::ButtonState::Pressing)
     {
         createAnimation();
     }
 
-    else if(currentMenuState == DisplayMainMenuState::Sensoring && backToMenu)
+    else if(currentMenuState == DisplayMainMenuState::Sensoring && backToMenu && buttonState != ButtonManager::ButtonState::Pressing)
     {
         createSensor();
     }
+
+    previousChangedButtonState = buttonState;
 
     return true;
 }
@@ -328,16 +348,30 @@ bool Application::DisplayManager::createAnimation()
     case DisplayAnimationsState::Animation_InitialState:
     {
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 70, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-   
+        driver.drawString(15, 10, "Animation", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(400, 50, "Mode", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+        m_sdCardManager.openFile(fileCountName);
+        m_sdCardManager.readFile(readWriteBuffer);
+        m_sdCardManager.closeFile();
+
+        frameCount = getFrameCount();
+        
+
+        driver.drawString(0, 90, "Image found", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(0, 110, "In SD card:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(50, 130, getImagesCount().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+
+        m_sdCardManager.openFile(fileImagesName);
+
         currentAnimationsState = DisplayAnimationsState::Animate;
 
         break;
     }
     case DisplayAnimationsState::Animate:
     {
-        // check sensor data and change display
-        driver.drawString(10, 100, "AnimWork", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        animation();
+        isAnimationRunning = true;
 
         break;
     }
@@ -416,4 +450,70 @@ bool Application::DisplayManager::createSettings()
     }
 
     return true;
+}
+
+bool Application::DisplayManager::animation()
+{
+    static uint32_t counter;
+    uint32_t currentTime = HAL_GetTick();
+
+    if(currentTime - imageShowedLastTime <= m_storage.getSettings().animationTime * 1000)
+    {
+        return true;
+        
+    }
+
+    if(counter >= frameCount)
+    {
+        m_sdCardManager.openFile(fileImagesName);
+        counter = 0;
+    }
+    else
+    {
+        counter++;
+    }
+    
+    uint32_t offset = counter * frameSize;
+
+    m_sdCardManager.seekFile(fileImagesName, offset);
+    m_sdCardManager.readImage(imageBuffer, frameSize);
+
+    driver.drawImage(imageBuffer);
+
+    imageShowedLastTime = currentTime;
+    
+    return true;
+}
+
+uint32_t Application::DisplayManager::getFrameCount()
+{
+    etl::string<maxCountLength> raw_chars(readWriteBuffer, maxCountLength);
+
+    uint32_t result = 0;
+
+    for (char c : raw_chars) 
+    {
+        if (c != 'X' && c != 'x') 
+        {
+            if (c >= '0' && c <= '9') 
+            {
+                result = (result * 10) + (c - '0');
+            }
+        }
+    }
+    
+    return result;
+
+}
+
+etl::string<Application::DisplayManager::maxCountLength> Application::DisplayManager::getImagesCount() 
+{
+  etl::string<maxCountLength> ver;
+
+  char countBuf[maxCountLength];
+  snprintf(countBuf, sizeof(countBuf), "%lu", frameCount);
+  ver.repair();
+
+  ver = countBuf;
+  return ver;
 }
