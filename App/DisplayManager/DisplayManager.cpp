@@ -8,6 +8,7 @@ bool Application::DisplayManager::createInit()
 {
     sensor.init();
     sensor.setMode(DriverLayer::SensorDriver::SensorMeasurementMode::SingleShot);
+    sensor.run();
 
     driver.init();
 

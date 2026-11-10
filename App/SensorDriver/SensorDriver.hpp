@@ -162,6 +162,9 @@ namespace DriverLayer
         bool getVersion();
         bool setLowPower(bool status);
         bool reset();
+        /* Reads measurement data from the ENS210. Returns false on I2C problems */
+        bool readData();
+        void convertData();
         SensorData   m_data;
         SensorConfig m_config;
     };
