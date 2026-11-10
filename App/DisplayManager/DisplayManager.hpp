@@ -2,6 +2,7 @@
 
 #include "ButtonManager/ButtonManager.hpp"
 #include "DisplayDriver/DisplayDriver.hpp"
+#include "SensorDriver/SensorDriver.hpp"
 #include "StorageManager/StorageManager.hpp"
 #include "SDCardManager/SDCardManager.hpp"
 
@@ -10,9 +11,9 @@ namespace Application {
 class DisplayManager {
 
 public:
-  DisplayManager(DriverLayer::DisplayDriver &dispDriver,
+  DisplayManager(DriverLayer::DisplayDriver &dispDriver, DriverLayer::SensorDriver &sensorDriver,
                  ButtonManager &btnManager, StorageManager &storage, SDCardManager &sdCardManager)
-      : driver(dispDriver), m_btnManager(btnManager), m_storage(storage), m_sdCardManager(sdCardManager),
+      : driver(dispDriver), sensor(sensorDriver), m_btnManager(btnManager), m_storage(storage), m_sdCardManager(sdCardManager),
         currentState(DisplayState::MAIN_MENU) {}
   bool createInit();
   bool createMenu();
@@ -50,6 +51,7 @@ public:
 
 private:
   DriverLayer::DisplayDriver &driver;
+  DriverLayer::SensorDriver &sensor;
   ButtonManager &m_btnManager;
   StorageManager &m_storage;
   SDCardManager &m_sdCardManager;

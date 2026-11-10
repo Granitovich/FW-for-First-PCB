@@ -84,7 +84,6 @@ namespace DriverLayer
 
         typedef enum : uint16_t
         {
-            // Основні кольори
             BLACK       = 0x0000,
             NAVY        = 0x000F,
             DARKBLUE    = 0x0010,
