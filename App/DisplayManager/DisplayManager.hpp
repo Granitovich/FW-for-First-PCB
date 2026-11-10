@@ -78,6 +78,8 @@ private:
   static constexpr uint16_t maxFileNameLength = 20;
 
   bool animation();
+  bool sensorExecute();
+  bool sensorNeedDataUpdate;
   uint32_t getFrameCount();
   etl::string<Application::DisplayManager::maxCountLength> getImagesCount();
   
@@ -89,8 +91,9 @@ private:
   static constexpr uint16_t frameSize = DriverLayer::DisplayDriver::DisplayDriverConstant::WIDTH * DriverLayer::DisplayDriver::DisplayDriverConstant::HEIGHT * 2; // 40960
   char fileImagesName[maxFileNameLength] = {"images.bin"};
   char fileCountName [maxFileNameLength] = {"ImCount.txt"};
-
-  uint32_t imageShowedLastTime = 0;
+ 
+  uint32_t imageShowedLastTime   = 0;
+  uint32_t sensorUpdatedLastTime = 0;
   bool isAnimationRunning = false;
   const uint32_t backFromAnimationDelay = 100; 
   uint32_t frameCount = 0;

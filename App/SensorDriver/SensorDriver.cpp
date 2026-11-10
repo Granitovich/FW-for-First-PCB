@@ -41,8 +41,6 @@ DriverLayer::SensorDriver::SensorStatus DriverLayer::SensorDriver::init()
 DriverLayer::SensorDriver::SensorStatus DriverLayer::SensorDriver::setMode(SensorMeasurementMode mode)
 {
     uint8_t currentmode = 0xFF;
-    /* TODO: Delete*/
-    crc7(currentmode);
 
     switch (mode)
     {
@@ -85,13 +83,6 @@ DriverLayer::SensorDriver::SensorStatus DriverLayer::SensorDriver::run()
     }
 
     if(HAL_OK != HAL_I2C_Mem_Write(m_i2c, (uint16_t)ENS210_ADDRESS_HAL, ENS210_REG_SENS_START, I2C_MEMADD_SIZE_8BIT, &triggerMeasurement, sizeof(triggerMeasurement), ENS210_TIMEOUT))
-    {
-        return SensorStatus::I2CError;
-    }
-    /* Wait for the measurement to complete */
-    HAL_Delay(ENS210_THCONV_SINGLE_MS);
-
-    if(!readData())
     {
         return SensorStatus::I2CError;
     }
@@ -179,7 +170,7 @@ bool DriverLayer::SensorDriver::reset()
     return true;
 }
 
-bool DriverLayer::SensorDriver::readData()
+DriverLayer::SensorDriver::SensorStatus DriverLayer::SensorDriver::readData()
 {
     uint8_t i2cbuf[6] = {0};
 	uint8_t valid;
@@ -188,7 +179,7 @@ bool DriverLayer::SensorDriver::readData()
 
     if(HAL_OK != HAL_I2C_Mem_Read(m_i2c, (uint16_t)ENS210_ADDRESS_HAL, ENS210_REG_T_VAL, I2C_MEMADD_SIZE_8BIT, i2cbuf, sizeof(i2cbuf), ENS210_TIMEOUT))
     {
-        return false;
+        return SensorStatus::I2CError;
     }
 
     uint32_t tempValue= (uint32_t)((uint32_t)i2cbuf[2]<<16 | (uint32_t)i2cbuf[1]<<8 | (uint32_t)i2cbuf[0]);
@@ -201,11 +192,11 @@ bool DriverLayer::SensorDriver::readData()
     uint32_t calculatedCRC = crc7(payload);
     if(calculatedCRC != crc)
     {
-        return false;
+        return SensorStatus::InvalidCRC;
     }
     if(!valid)
     {
-        return false;
+        return SensorStatus::InvalidData;
     }
 
     uint32_t humidityValue= (uint32_t)((uint32_t)i2cbuf[5]<<16 | (uint32_t)i2cbuf[4]<<8 | (uint32_t)i2cbuf[3]);
@@ -218,15 +209,15 @@ bool DriverLayer::SensorDriver::readData()
     calculatedCRC = crc7(payload);
     if(calculatedCRC != crc)
     {
-        return false;
+        return SensorStatus::InvalidCRC;
     }
     if(!valid)
     {
-        return false;
+        return SensorStatus::InvalidData;
     }
     convertData();
 
-    return true;
+    return SensorStatus::OK;
 }
 
 void DriverLayer::SensorDriver::convertData()
@@ -244,4 +235,48 @@ void DriverLayer::SensorDriver::convertData()
     m_data.temperature = static_cast<uint32_t>(tempCelsius * 100.0f); // Store as 0.01 degree Celsius
     m_data.humidity    = static_cast<uint32_t>(humPercent * 100.0f);    // Store as 0.01 %RH
 
+    etl::string<ENS210_STRING_BUFFER_SIZE> stringBuf;
+    char stringBufffer[ENS210_STRING_BUFFER_SIZE];
+
+    snprintf(stringBufffer, sizeof(stringBufffer), "%lu",
+            m_data.temperature);
+    stringBuf.repair();
+
+    stringBufffer[6] = stringBufffer[2];
+    stringBufffer[7] = stringBufffer[3];
+    stringBufffer[2] = '.';
+    stringBufffer[3] = stringBufffer[6];
+    stringBufffer[4] = stringBufffer[7];
+    stringBufffer[5] = '\0';
+    
+    stringBuf = stringBufffer;
+
+
+    m_data.temperatureStr = stringBuf;
+
+    snprintf(stringBufffer, sizeof(stringBufffer), "%lu",
+            m_data.humidity);
+    stringBuf.repair();
+    stringBuf = stringBufffer;
+
+    m_data.humidityStr = stringBuf;
+}
+
+
+DriverLayer::SensorDriver::SensorStatus DriverLayer::SensorDriver::getStatus()
+{
+    uint8_t status = 0xFF;
+
+    if(HAL_OK != HAL_I2C_Mem_Read(m_i2c, (uint16_t)ENS210_ADDRESS_HAL, ENS210_REG_SENS_STAT, I2C_MEMADD_SIZE_8BIT, &status, sizeof(status), ENS210_TIMEOUT))
+    {
+        return SensorStatus::I2CError;
+    }
+    if(status & 0x03)
+    {
+        return SensorStatus::Busy;
+    }
+    else
+    {
+        return SensorStatus::Ready;
+    }
 }

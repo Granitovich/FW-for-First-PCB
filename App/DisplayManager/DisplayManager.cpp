@@ -318,11 +318,13 @@ bool Application::DisplayManager::createSensor()
     case DisplaySensorState::Sensor_InitialState:
     {
         driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 10, "Sensor Data", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 40, "Temperature:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 70, "Humidity:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 100, "SensTime: ", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        driver.drawString(0, 130, m_storage.getSensorTime().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(5, 10, "Sensor Data", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(5, 40, "Temperature", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawRoundRect(20, 70, 100, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(25, 75, "20.53 *C", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        //driver.drawString(10, 100, "Humidity:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        //driver.drawRoundRect(10, 130, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+      
 
         currentSensorState = DisplaySensorState::Monitoring;
 
@@ -330,9 +332,7 @@ bool Application::DisplayManager::createSensor()
     }
     case DisplaySensorState::Monitoring:
     {
-        // check sensor data and change display
-        driver.drawString(10, 130, "SensWork", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-
+        sensorExecute();
         break;
     }
     default:
@@ -457,26 +457,26 @@ bool Application::DisplayManager::createSettings()
 
 bool Application::DisplayManager::animation()
 {
-    static uint32_t counter;
+    static uint32_t animationCounter;
     uint32_t currentTime = HAL_GetTick();
 
     if(currentTime - imageShowedLastTime <= m_storage.getSettings().animationTime * 1000)
     {
         return true;
-        
+
     }
 
-    if(counter >= frameCount)
+    if(animationCounter >= frameCount)
     {
         m_sdCardManager.openFile(fileImagesName);
-        counter = 0;
+        animationCounter = 0;
     }
     else
     {
-        counter++;
+        animationCounter++;
     }
     
-    uint32_t offset = counter * frameSize;
+    uint32_t offset = animationCounter * frameSize;
 
     m_sdCardManager.seekFile(fileImagesName, offset);
     m_sdCardManager.readImage(imageBuffer, frameSize);
@@ -484,6 +484,37 @@ bool Application::DisplayManager::animation()
     driver.drawImage(imageBuffer);
 
     imageShowedLastTime = currentTime;
+    
+    return true;
+}
+
+bool Application::DisplayManager::sensorExecute()
+{
+    uint32_t currentTime = HAL_GetTick();
+
+    if(currentTime - sensorUpdatedLastTime <= m_storage.getSettings().sensorTime * 1000)
+    {
+        if(sensorNeedDataUpdate)
+        {
+            if(currentTime - sensorUpdatedLastTime >= m_storage.SensorTime_Measurement)
+            {
+                if(sensor.getStatus() == DriverLayer::SensorDriver::SensorStatus::Ready)
+                {
+                    sensor.readData();
+                    driver.drawString(25, 75, sensor.getData().temperatureStr.c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+                    sensorNeedDataUpdate = false;
+                    return true;
+                }
+            }
+            
+        }
+
+        return true;
+    }
+
+    sensor.run();
+    sensorNeedDataUpdate = true;
+    sensorUpdatedLastTime = currentTime;
     
     return true;
 }

@@ -1,8 +1,8 @@
 
 #pragma once
 #include "main.h"
-#include "stm32g0xx_hal_i2c.h"
 #include <cstdint>
+#include "etl/string.h"
 
 
 /*
@@ -43,6 +43,8 @@ namespace DriverLayer
             I2CError,
 
             InvalidParameter,
+            Busy,
+            Ready,
         
         };
 
@@ -88,6 +90,8 @@ namespace DriverLayer
 
             ENS210_TRIALS  = 5,
             ENS210_TIMEOUT = 100,
+
+            ENS210_STRING_BUFFER_SIZE = 10,
             
             
         } SensorDriverConstant;
@@ -144,11 +148,15 @@ namespace DriverLayer
         {
             uint32_t temperature;
             uint32_t humidity;
+            etl::string<ENS210_STRING_BUFFER_SIZE> temperatureStr;
+            etl::string<ENS210_STRING_BUFFER_SIZE> humidityStr;
         } SensorData;
         
         SensorStatus init();
         SensorStatus setMode(SensorMeasurementMode mode);
         SensorStatus run();
+        SensorStatus getStatus();
+        SensorStatus readData();
         SensorData getData() { return m_data; }
 
     private:
@@ -163,7 +171,6 @@ namespace DriverLayer
         bool setLowPower(bool status);
         bool reset();
         /* Reads measurement data from the ENS210. Returns false on I2C problems */
-        bool readData();
         void convertData();
         SensorData   m_data;
         SensorConfig m_config;
