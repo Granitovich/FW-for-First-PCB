@@ -321,8 +321,10 @@ bool Application::DisplayManager::createSensor()
         driver.drawString(5, 10, "Sensor Data", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawString(5, 40, "Temperature", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(20, 70, 100, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-        driver.drawString(25, 75, "20.53 *C", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        //driver.drawString(10, 100, "Humidity:", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawString(25, 75, "20.00 *C", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+         driver.drawString(25, 110, "Humidity", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+         driver.drawRoundRect(20, 130, 100, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+         driver.drawString(25, 135, "20.00 %", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         //driver.drawRoundRect(10, 130, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
       
 
@@ -501,7 +503,8 @@ bool Application::DisplayManager::sensorExecute()
                 if(sensor.getStatus() == DriverLayer::SensorDriver::SensorStatus::Ready)
                 {
                     sensor.readData();
-                    driver.drawString(25, 75, sensor.getData().temperatureStr.c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+                    driver.drawString(25, 75,  sensor.getData().temperatureStr.c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+                    driver.drawString(25, 135, sensor.getData().humidityStr.c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
                     sensorNeedDataUpdate = false;
                     return true;
                 }

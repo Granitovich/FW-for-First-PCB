@@ -172,6 +172,7 @@ namespace DriverLayer
         bool reset();
         /* Reads measurement data from the ENS210. Returns false on I2C problems */
         void convertData();
+        etl::string<ENS210_STRING_BUFFER_SIZE> convertToBuffer(uint32_t data);
         SensorData   m_data;
         SensorConfig m_config;
     };

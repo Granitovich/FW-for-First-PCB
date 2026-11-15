@@ -235,31 +235,8 @@ void DriverLayer::SensorDriver::convertData()
     m_data.temperature = static_cast<uint32_t>(tempCelsius * 100.0f); // Store as 0.01 degree Celsius
     m_data.humidity    = static_cast<uint32_t>(humPercent * 100.0f);    // Store as 0.01 %RH
 
-    etl::string<ENS210_STRING_BUFFER_SIZE> stringBuf;
-    char stringBufffer[ENS210_STRING_BUFFER_SIZE];
-
-    snprintf(stringBufffer, sizeof(stringBufffer), "%lu",
-            m_data.temperature);
-    stringBuf.repair();
-
-    stringBufffer[6] = stringBufffer[2];
-    stringBufffer[7] = stringBufffer[3];
-    stringBufffer[2] = '.';
-    stringBufffer[3] = stringBufffer[6];
-    stringBufffer[4] = stringBufffer[7];
-    stringBufffer[5] = '\0';
-    
-    stringBuf = stringBufffer;
-
-
-    m_data.temperatureStr = stringBuf;
-
-    snprintf(stringBufffer, sizeof(stringBufffer), "%lu",
-            m_data.humidity);
-    stringBuf.repair();
-    stringBuf = stringBufffer;
-
-    m_data.humidityStr = stringBuf;
+    m_data.temperatureStr = convertToBuffer( m_data.temperature);
+    m_data.humidityStr    = convertToBuffer( m_data.humidity);
 }
 
 
@@ -279,4 +256,25 @@ DriverLayer::SensorDriver::SensorStatus DriverLayer::SensorDriver::getStatus()
     {
         return SensorStatus::Ready;
     }
+}
+
+etl::string<DriverLayer::SensorDriver::ENS210_STRING_BUFFER_SIZE> DriverLayer::SensorDriver::convertToBuffer(uint32_t data)
+{
+    etl::string<ENS210_STRING_BUFFER_SIZE> etlString;
+    char stringBufffer[ENS210_STRING_BUFFER_SIZE];
+
+    snprintf(stringBufffer, sizeof(stringBufffer), "%lu",
+            data);
+    etlString.repair();
+
+    stringBufffer[6] = stringBufffer[2];
+    stringBufffer[7] = stringBufffer[3];
+    stringBufffer[2] = '.';
+    stringBufffer[3] = stringBufffer[6];
+    stringBufffer[4] = stringBufffer[7];
+    stringBufffer[5] = '\0';
+    
+    etlString = stringBufffer;
+
+    return etlString;
 }
