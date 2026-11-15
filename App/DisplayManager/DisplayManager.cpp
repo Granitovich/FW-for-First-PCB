@@ -34,7 +34,7 @@ bool Application::DisplayManager::createInit()
 
     driver.drawString(40, 130, m_storage.getVersion().c_str(), Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
-    HAL_Delay(1000);
+    HAL_Delay(2000);
     driver.fillScreen(DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
 
     currentMenuState = static_cast<DisplayMainMenuState>(DisplayMainMenuState::MainMenu_InitialState);
@@ -322,12 +322,10 @@ bool Application::DisplayManager::createSensor()
         driver.drawString(5, 40, "Temperature", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
         driver.drawRoundRect(20, 70, 100, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
         driver.drawString(25, 75, "20.00 *C", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-         driver.drawString(25, 110, "Humidity", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-         driver.drawRoundRect(20, 130, 100, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
-         driver.drawString(25, 135, "20.00 %", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
-        //driver.drawRoundRect(10, 130, 108, 40, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(25, 110, "Humidity", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::LIGHT_GRAY, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
+        driver.drawRoundRect(20, 130, 100, 30, 3, DriverLayer::DisplayDriver::DisplayDriverColor::BLUE);
+        driver.drawString(25, 135, "20.00  %", Font_11x18, DriverLayer::DisplayDriver::DisplayDriverColor::GREEN, DriverLayer::DisplayDriver::DisplayDriverColor::BLACK);
       
-
         currentSensorState = DisplaySensorState::Monitoring;
 
         break;

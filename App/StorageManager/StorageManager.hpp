@@ -73,7 +73,6 @@ namespace Application
 
         } CurrentModes;
 
-    
         typedef enum
         {
             BrightnessAddress    = 0x01,
