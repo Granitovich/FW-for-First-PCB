@@ -62,9 +62,9 @@ DMA_HandleTypeDef hdma_spi3_tx;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-bool transferComplete = false;
+bool transferComplete     = false;
 bool buttonChangedPressed = false;
-bool buttonSetPressed = false;
+bool buttonSetPressed     = false;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -125,17 +125,8 @@ int main(void)
     Error_Handler();
   }
   MX_CRC_Init();
-  /* USER CODE BEGIN 2 */
-  // ST7735_Init(&hspi3);
-  // ST7735_SetRotation(3);
-  // ST7735_Backlight_On();
-  // ST7735_FillScreen(ST7735_GREEN);
-  // ST7735_DrawLine(10, 10, 20, 20, ST7735_RED);
-
-  //fatfs_init();
-   mainCpp();
   /* USER CODE END 2 */
-
+  mainCpp();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)

@@ -7,8 +7,11 @@
 #include "ButtonManager/ButtonManager.hpp"
 #include "StorageManager/StorageManager.hpp"
 #include "SDCardManager/SDCardManager.hpp"
+#include "SensorDriver/SensorDriver.hpp"
 #include "main.h"
 #include "stm32g0xx_hal.h"
+
+extern I2C_HandleTypeDef hi2c2;
 extern SPI_HandleTypeDef hspi3;
 extern bool buttonChangedPressed;
 extern bool buttonSetPressed;
@@ -28,12 +31,12 @@ void App::run()
 
   };
 
-  DriverLayer::DisplayDriver driver(&hspi3, gpios);
+  DriverLayer::SensorDriver  sensorDriver(&hi2c2);
+  DriverLayer::DisplayDriver displayDriver(&hspi3, gpios);
   Application::StorageManager storage;
   Application::ButtonManager btnManager(buttonChangedPressed, buttonSetPressed);
   Application::SDCardManager sdCardManager;
-  Application::DisplayManager display(driver, btnManager, storage, sdCardManager);
-
+  Application::DisplayManager display(displayDriver, sensorDriver, btnManager, storage, sdCardManager);
   storage.restoreSettings();
   
   if(!display.createInit())

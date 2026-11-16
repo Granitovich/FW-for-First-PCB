@@ -117,19 +117,19 @@ bool Application::StorageManager::verifyData(SettingsData &data) {
     return false;
   }
 
-  if ((data.animationTime != AnimationTimeModes::AnimationTime_10s) &&
-      (data.animationTime != AnimationTimeModes::AnimationTime_20s) &&
-      (data.animationTime != AnimationTimeModes::AnimationTime_30s) &&
-      (data.animationTime != AnimationTimeModes::AnimationTime_45s) &&
-      (data.animationTime != AnimationTimeModes::AnimationTime_60s)) {
+  if ((data.animationTime != AnimationTimeModes::AnimationTime_1s)  &&
+      (data.animationTime != AnimationTimeModes::AnimationTime_3s)  &&
+      (data.animationTime != AnimationTimeModes::AnimationTime_5s)  &&
+      (data.animationTime != AnimationTimeModes::AnimationTime_10s) &&
+      (data.animationTime != AnimationTimeModes::AnimationTime_25s)) {
     return false;
   }
 
-  if ((data.sensorTime != SensorTimeModes::SensorTime_10s) &&
-      (data.sensorTime != SensorTimeModes::SensorTime_20s) &&
-      (data.sensorTime != SensorTimeModes::SensorTime_30s) &&
-      (data.sensorTime != SensorTimeModes::SensorTime_45s) &&
-      (data.sensorTime != SensorTimeModes::SensorTime_60s)) {
+  if ((data.sensorTime != SensorTimeModes::SensorTime_1s)  &&
+      (data.sensorTime != SensorTimeModes::SensorTime_3s)  &&
+      (data.sensorTime != SensorTimeModes::SensorTime_5s)  &&
+      (data.sensorTime != SensorTimeModes::SensorTime_10s) &&
+      (data.sensorTime != SensorTimeModes::SensorTime_25s)) {
     return false;
   }
 
@@ -202,24 +202,24 @@ Application::StorageManager::getAnimationTime() const {
   char versionBuf[versionBufferSize];
 
   switch (settingsData.animationTime) {
+  case AnimationTimeModes::AnimationTime_1s: {
+    snprintf(versionBuf, sizeof(versionBuf), " 1s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_3s: {
+    snprintf(versionBuf, sizeof(versionBuf), " 3s");
+    break;
+  }
+  case AnimationTimeModes::AnimationTime_5s: {
+    snprintf(versionBuf, sizeof(versionBuf), " 5s");
+    break;
+  }
   case AnimationTimeModes::AnimationTime_10s: {
     snprintf(versionBuf, sizeof(versionBuf), "10s");
     break;
   }
-  case AnimationTimeModes::AnimationTime_20s: {
-    snprintf(versionBuf, sizeof(versionBuf), "20s");
-    break;
-  }
-  case AnimationTimeModes::AnimationTime_30s: {
-    snprintf(versionBuf, sizeof(versionBuf), "30s");
-    break;
-  }
-  case AnimationTimeModes::AnimationTime_45s: {
-    snprintf(versionBuf, sizeof(versionBuf), "45s");
-    break;
-  }
-  case AnimationTimeModes::AnimationTime_60s: {
-    snprintf(versionBuf, sizeof(versionBuf), "60s");
+  case AnimationTimeModes::AnimationTime_25s: {
+    snprintf(versionBuf, sizeof(versionBuf), "25s");
     break;
   }
   }
@@ -236,24 +236,24 @@ Application::StorageManager::getSensorTime() const {
   char versionBuf[versionBufferSize];
 
   switch (settingsData.sensorTime) {
+  case SensorTimeModes::SensorTime_1s: {
+    snprintf(versionBuf, sizeof(versionBuf), " 1s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_3s: {
+    snprintf(versionBuf, sizeof(versionBuf), " 3s");
+    break;
+  }
+  case SensorTimeModes::SensorTime_5s: {
+    snprintf(versionBuf, sizeof(versionBuf), " 5s");
+    break;
+  }
   case SensorTimeModes::SensorTime_10s: {
     snprintf(versionBuf, sizeof(versionBuf), "10s");
     break;
   }
-  case SensorTimeModes::SensorTime_20s: {
-    snprintf(versionBuf, sizeof(versionBuf), "20s");
-    break;
-  }
-  case SensorTimeModes::SensorTime_30s: {
-    snprintf(versionBuf, sizeof(versionBuf), "30s");
-    break;
-  }
-  case SensorTimeModes::SensorTime_45s: {
-    snprintf(versionBuf, sizeof(versionBuf), "45s");
-    break;
-  }
-  case SensorTimeModes::SensorTime_60s: {
-    snprintf(versionBuf, sizeof(versionBuf), "60s");
+  case SensorTimeModes::SensorTime_25s: {
+    snprintf(versionBuf, sizeof(versionBuf), "25s");
     break;
   }
   }

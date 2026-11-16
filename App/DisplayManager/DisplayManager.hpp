@@ -2,6 +2,7 @@
 
 #include "ButtonManager/ButtonManager.hpp"
 #include "DisplayDriver/DisplayDriver.hpp"
+#include "SensorDriver/SensorDriver.hpp"
 #include "StorageManager/StorageManager.hpp"
 #include "SDCardManager/SDCardManager.hpp"
 
@@ -10,9 +11,9 @@ namespace Application {
 class DisplayManager {
 
 public:
-  DisplayManager(DriverLayer::DisplayDriver &dispDriver,
+  DisplayManager(DriverLayer::DisplayDriver &dispDriver, DriverLayer::SensorDriver &sensorDriver,
                  ButtonManager &btnManager, StorageManager &storage, SDCardManager &sdCardManager)
-      : driver(dispDriver), m_btnManager(btnManager), m_storage(storage), m_sdCardManager(sdCardManager),
+      : driver(dispDriver), sensor(sensorDriver), m_btnManager(btnManager), m_storage(storage), m_sdCardManager(sdCardManager),
         currentState(DisplayState::MAIN_MENU) {}
   bool createInit();
   bool createMenu();
@@ -50,6 +51,7 @@ public:
 
 private:
   DriverLayer::DisplayDriver &driver;
+  DriverLayer::SensorDriver &sensor;
   ButtonManager &m_btnManager;
   StorageManager &m_storage;
   SDCardManager &m_sdCardManager;
@@ -76,6 +78,8 @@ private:
   static constexpr uint16_t maxFileNameLength = 20;
 
   bool animation();
+  bool sensorExecute();
+  bool sensorNeedDataUpdate;
   uint32_t getFrameCount();
   etl::string<Application::DisplayManager::maxCountLength> getImagesCount();
   
@@ -87,8 +91,9 @@ private:
   static constexpr uint16_t frameSize = DriverLayer::DisplayDriver::DisplayDriverConstant::WIDTH * DriverLayer::DisplayDriver::DisplayDriverConstant::HEIGHT * 2; // 40960
   char fileImagesName[maxFileNameLength] = {"images.bin"};
   char fileCountName [maxFileNameLength] = {"ImCount.txt"};
-
-  uint32_t imageShowedLastTime = 0;
+ 
+  uint32_t imageShowedLastTime   = 0;
+  uint32_t sensorUpdatedLastTime = 0;
   bool isAnimationRunning = false;
   const uint32_t backFromAnimationDelay = 100; 
   uint32_t frameCount = 0;

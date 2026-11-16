@@ -45,22 +45,23 @@ namespace Application
 
         typedef enum 
         {
-            AnimationTime_10s  = 1,
-            AnimationTime_20s = 2,
-            AnimationTime_30s = 3,
-            AnimationTime_45s = 4,
-            AnimationTime_60s = 5,
+            AnimationTime_1s  = 1,
+            AnimationTime_3s = 3,
+            AnimationTime_5s = 5,
+            AnimationTime_10s = 10,
+            AnimationTime_25s = 25,
             AnimationTime_Count = 5,
         } AnimationTimeModes;
 
         typedef enum
         {
-            SensorTime_10s  = 1,
-            SensorTime_20s = 2,
-            SensorTime_30s = 3,
-            SensorTime_45s = 4,
-            SensorTime_60s = 5,
+            SensorTime_1s  = 1,
+            SensorTime_3s = 3,
+            SensorTime_5s = 5,
+            SensorTime_10s = 10,
+            SensorTime_25s = 25,
             SensorTime_Count = 5,
+            SensorTime_Measurement = 200,
         } SensorTimeModes;
 
         typedef enum 
@@ -72,7 +73,6 @@ namespace Application
 
         } CurrentModes;
 
-    
         typedef enum
         {
             BrightnessAddress    = 0x01,

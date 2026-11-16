@@ -48,6 +48,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     Core/Src/st7735.c
     App/Application.cpp
     App/mainCpp.cpp
+    App/SensorDriver/SensorDriver.cpp
     App/DisplayDriver/DisplayDriver.cpp
     App/DisplayDriver/Constants/Fonts.c
     App/DisplayManager/DisplayManager.cpp
