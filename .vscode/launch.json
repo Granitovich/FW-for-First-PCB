@@ -1,0 +1,28 @@
+{
+    "configurations": [
+    {
+        "cwd": "${workspaceFolder}",
+        "executable": "./build/Debug/MemoryHub.elf",
+        "name": "Debug with ST-Link",
+        "request": "launch",
+        "type": "cortex-debug",
+        "runToEntryPoint": "main",
+        "showDevDebugOutput": "none",
+        "servertype": "stlink"
+    },
+    {
+            "cwd": "${workspaceFolder}",
+            "executable": "./build/Debug/MemoryHub.elf",
+            "name": "Debug with JLink",
+            "request": "launch",
+            "type": "cortex-debug",
+            "device": "STM32G0B1KC",
+            "runToEntryPoint": "main",
+            "showDevDebugOutput": "none",
+            "preLaunchTask": "",
+            "servertype": "jlink",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V866/JLinkGDBServerCL.exe",
+            "gdbPath": "arm-none-eabi-gdb"
+        },
+    ]
+}

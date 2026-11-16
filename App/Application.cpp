@@ -1,0 +1,56 @@
+#include "Application.hpp"
+#include "DisplayDriver/Constants/Fonts.h"
+#include "DisplayDriver/Constants/Images.h"
+#include "DisplayDriver/Constants/fonts.h"
+#include "DisplayDriver/DisplayDriver.hpp"
+#include "DisplayManager/DisplayManager.hpp"
+#include "ButtonManager/ButtonManager.hpp"
+#include "StorageManager/StorageManager.hpp"
+#include "SDCardManager/SDCardManager.hpp"
+#include "SensorDriver/SensorDriver.hpp"
+#include "main.h"
+#include "stm32g0xx_hal.h"
+
+extern I2C_HandleTypeDef hi2c2;
+extern SPI_HandleTypeDef hspi3;
+extern bool buttonChangedPressed;
+extern bool buttonSetPressed;
+
+// This is the C++ code that will run in the main loop.
+void App::run() 
+{
+  DriverLayer::DisplayDriver::DriverGpio gpios;
+  gpios = {.resetPort = DISP_RES_GPIO_Port,
+           .resetPin = DISP_RES_Pin,
+           .dataCmdPort = DISP_DC_GPIO_Port,
+           .dataCmdPin = DISP_DC_Pin,
+           .csPort = DISP_CS_GPIO_Port,
+           .csPin = DISP_CS_Pin,
+           .ledPort = DISP_LED_GPIO_Port,
+           .ledPin = DISP_LED_Pin
+
+  };
+
+  DriverLayer::SensorDriver  sensorDriver(&hi2c2);
+  DriverLayer::DisplayDriver displayDriver(&hspi3, gpios);
+  Application::StorageManager storage;
+  Application::ButtonManager btnManager(buttonChangedPressed, buttonSetPressed);
+  Application::SDCardManager sdCardManager;
+  Application::DisplayManager display(displayDriver, sensorDriver, btnManager, storage, sdCardManager);
+  storage.restoreSettings();
+  
+  if(!display.createInit())
+  {
+    while(true)
+    {}
+  }
+
+  while((true))
+  {
+    display.run();
+  }
+
+
+  // display.drawImage(Images::MemoryCardErrorPortrait);
+  //  Place your initialization code here.
+}
