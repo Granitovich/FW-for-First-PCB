@@ -22,15 +22,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "st7735.h"
-#include "fonts.h"
-#include "image.h"
-
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h> //for va_list var arg functions
-
 #include "mainCpp.h"
+#include "stdbool.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

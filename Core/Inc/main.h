@@ -90,19 +90,8 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
-#define ST7735_RES_Pin 		 DISP_RES_Pin
-#define ST7735_RES_GPIO_Port DISP_RES_GPIO_Port
-#define ST7735_DC_Pin 		 DISP_DC_Pin
-#define ST7735_DC_GPIO_Port  DISP_DC_GPIO_Port
-#define ST7735_CS_Pin 		 DISP_CS_Pin
-#define ST7735_CS_GPIO_Port  DISP_CS_GPIO_Port
-#define ST7735_BL_Pin 	     DISP_LED_Pin
-#define ST7735_BL_GPIO_Port  DISP_LED_GPIO_Port
-
 /* USER CODE BEGIN Private defines */
-#define SD_SPI_HANDLE     hspi2
-#define SPI1_CS_GPIO_Port SD_CS_GPIO_Port
-#define SPI1_CS_Pin       SD_CS_Pin
+
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
