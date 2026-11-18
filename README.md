@@ -46,27 +46,6 @@ Build outputs are placed in `build/Debug/` or `build/Release/`. The post-build
 step generates both `MemoryHub.bin` and `MemoryHub.hex` in addition to the ELF
 file.
 
-## Release notes
-
-### Version 1.2.2
-
-#### Added
-
-- PWM control for the display backlight through TIM2 Channel 2.
-- Five saved brightness levels: 5%, 10%, 30%, 40%, and maximum.
-- Automatic generation of `.bin` and `.hex` firmware files after a successful build.
-- HAL timer support for TIM2.
-
-#### Changed
-
-- Increased the system clock frequency from 30 MHz to 64 MHz.
-- Updated I2C, SPI, DMA, flash, and peripheral timing for the 64 MHz configuration.
-- Reduced SPI2 and SPI3 baud-rate prescalers to match the updated clock.
-- Updated display settings handling to apply brightness through PWM.
-- Updated brightness settings storage and display names.
-- Updated the J-Link GDB server path used by the VS Code debug configuration.
-- Removed obsolete direct-ST7735 source files and legacy GPIO backlight switching.
-
 #### Removed
 
 - Removed unnecessary legacy display code left from the original ST7735
