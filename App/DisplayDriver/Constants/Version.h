@@ -1,8 +1,8 @@
 #include <cstdint>
 
 #define MAJOR_VERSION 1
-#define MINOR_VERSION 1
-#define PATCH_VERSION 1
+#define MINOR_VERSION 2
+#define PATCH_VERSION 2
 
 typedef struct 
 {
