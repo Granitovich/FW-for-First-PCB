@@ -1,9 +1,11 @@
 #include "DisplayDriver.hpp"
+#include "stm32g0xx_hal_tim.h"
 #include "utility"
 #include <cstdlib>
 using namespace DriverLayer;
 
 extern bool transferComplete;
+extern TIM_HandleTypeDef htim2;
 uint8_t DisplayDriver::transferDmaBuffer[DisplayDriver::DisplayDriverConstant::DMA_BUFFER_SIZE];
 /*
  * GLib_ST7735R_1.8_TFT
@@ -129,17 +131,44 @@ DisplayDriver::DisplayStatus DisplayDriver::init()
     csSet(true);
     setRotation(m_config.rotationValue);
     
-    return DisplayStatus::OK;
-}
-DisplayDriver::DisplayStatus DisplayDriver::backlightOn()
-{
-    blSet(true);
-    return DisplayStatus::OK;
-}
+    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
 
-DisplayDriver::DisplayStatus DisplayDriver::backlightOff()
+    return DisplayStatus::OK;
+}
+DisplayDriver::DisplayStatus DisplayDriver::brightSet(DriverBrightness level)
 {
-    blSet(false);
+    switch (level)
+    {
+        case DriverBrightness::BrightnessLevel_1:
+        {
+            htim2.Instance->CCR2 = 40;
+            break;
+        }
+        case DriverBrightness::BrightnessLevel_2:
+        {
+            htim2.Instance->CCR2 = 80;
+            break;
+        }
+        case DriverBrightness::BrightnessLevel_3:
+        {
+            htim2.Instance->CCR2 = 240;
+            break;
+        }
+        case DriverBrightness::BrightnessLevel_4:
+        {
+            htim2.Instance->CCR2 = 320;
+            break;
+        }
+        case DriverBrightness::BrightnessLevel_MAX:
+        {
+            htim2.Instance->CCR2 = 799;
+            break;
+        }
+       
+        default:
+            break;
+        }
+ 
     return DisplayStatus::OK;
 }
 
@@ -233,10 +262,6 @@ void DisplayDriver::csSet(bool state)
 void DisplayDriver::dcSet(bool state)
 {
     GPIO_SetPin(m_config.gpio.dataCmdPort, m_config.gpio.dataCmdPin, state);
-}
-void DisplayDriver::blSet(bool state)
-{
-    GPIO_SetPin(m_config.gpio.ledPort, m_config.gpio.ledPin, state);
 }
 
 void DisplayDriver::displayReset()

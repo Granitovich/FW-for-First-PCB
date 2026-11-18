@@ -26,9 +26,6 @@ void App::run()
            .dataCmdPin = DISP_DC_Pin,
            .csPort = DISP_CS_GPIO_Port,
            .csPin = DISP_CS_Pin,
-           .ledPort = DISP_LED_GPIO_Port,
-           .ledPin = DISP_LED_Pin
-
   };
 
   DriverLayer::SensorDriver  sensorDriver(&hi2c2);

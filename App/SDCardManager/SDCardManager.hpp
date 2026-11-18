@@ -21,9 +21,7 @@ namespace Application
         bool closeFile();
        
     private:
-       FATFS fs;
-       FIL  file;
-	   UINT br;
+      
        
     };
 }

@@ -109,11 +109,11 @@ bool Application::StorageManager::writeSettings(SettingsData &data) {
 
 bool Application::StorageManager::verifyData(SettingsData &data) {
 
-  if ((data.brightLevel != BrightnessModes::Brightness_10) &&
-      (data.brightLevel != BrightnessModes::Brightness_25) &&
-      (data.brightLevel != BrightnessModes::Brightness_50) &&
-      (data.brightLevel != BrightnessModes::Brightness_75) &&
-      (data.brightLevel != BrightnessModes::Brightness_100)) {
+  if ((data.brightLevel != BrightnessModes::Brightness_5) &&
+      (data.brightLevel != BrightnessModes::Brightness_10) &&
+      (data.brightLevel != BrightnessModes::Brightness_30) &&
+      (data.brightLevel != BrightnessModes::Brightness_40) &&
+      (data.brightLevel != BrightnessModes::Brightness_MAX)) {
     return false;
   }
 
@@ -169,23 +169,23 @@ Application::StorageManager::getBrightness() const {
   char versionBuf[versionBufferSize];
 
   switch (settingsData.brightLevel) {
+  case BrightnessModes::Brightness_5: {
+    snprintf(versionBuf, sizeof(versionBuf), "5 %%");
+    break;
+  }
   case BrightnessModes::Brightness_10: {
     snprintf(versionBuf, sizeof(versionBuf), "10%%");
     break;
   }
-  case BrightnessModes::Brightness_25: {
-    snprintf(versionBuf, sizeof(versionBuf), "25%%");
+  case BrightnessModes::Brightness_30: {
+    snprintf(versionBuf, sizeof(versionBuf), "30%%");
     break;
   }
-  case BrightnessModes::Brightness_50: {
-    snprintf(versionBuf, sizeof(versionBuf), "50%%");
+  case BrightnessModes::Brightness_40: {
+    snprintf(versionBuf, sizeof(versionBuf), "40%%");
     break;
   }
-  case BrightnessModes::Brightness_75: {
-    snprintf(versionBuf, sizeof(versionBuf), "75%%");
-    break;
-  }
-  case BrightnessModes::Brightness_100: {
+  case BrightnessModes::Brightness_MAX: {
     snprintf(versionBuf, sizeof(versionBuf), "MAX");
   }
   }
