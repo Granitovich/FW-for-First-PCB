@@ -35,11 +35,11 @@ namespace Application
     
         typedef enum 
         {
-            Brightness_10 = 1,
-            Brightness_25 = 2,
-            Brightness_50 = 3,
-            Brightness_75 = 4,
-            Brightness_100 = 5,
+            Brightness_5 = 1,
+            Brightness_10 = 2,
+            Brightness_30 = 3,
+            Brightness_40 = 4,
+            Brightness_MAX = 5,
             Brightness_Count = 5,
         } BrightnessModes;
 

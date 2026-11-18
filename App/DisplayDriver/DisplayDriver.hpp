@@ -43,15 +43,21 @@ namespace DriverLayer
             uint16_t dataCmdPin;
             GPIO_TypeDef *csPort;
             uint16_t csPin;
-            GPIO_TypeDef *ledPort;
-            uint16_t ledPin;
         } DriverGpio;
+
+        typedef enum
+        {
+            BrightnessLevel_1 = 1,
+            BrightnessLevel_2,
+            BrightnessLevel_3,
+            BrightnessLevel_4,
+            BrightnessLevel_MAX
+        } DriverBrightness;
 
         explicit DisplayDriver(SPI_HandleTypeDef *hspi, DriverGpio &gpios);
 
         DisplayStatus init();
-        DisplayStatus backlightOn();
-        DisplayStatus backlightOff();
+        DisplayStatus brightSet(DriverBrightness level);
         DisplayStatus setRotation(const uint8_t rotation);
         DisplayStatus drawPixel(const uint16_t x, const uint16_t y, const uint16_t color);
         DisplayStatus drawImage(const uint16_t* image);

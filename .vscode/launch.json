@@ -21,7 +21,7 @@
             "showDevDebugOutput": "none",
             "preLaunchTask": "",
             "servertype": "jlink",
-            "serverpath": "C:/Program Files/SEGGER/JLink_V866/JLinkGDBServerCL.exe",
+            "serverpath": "C:/Program Files/SEGGER/JLink_V850/JLinkGDBServerCL.exe",
             "gdbPath": "arm-none-eabi-gdb"
         },
     ]

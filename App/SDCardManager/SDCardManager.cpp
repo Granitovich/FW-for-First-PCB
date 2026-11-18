@@ -1,4 +1,7 @@
 #include "SDCardManager.hpp"
+extern FATFS fs;
+extern FIL  file;
+extern UINT br;
 
 bool Application::SDCardManager::init() 
 {
